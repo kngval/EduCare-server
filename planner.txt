@@ -1,18 +1,18 @@
  TEST EVERYTHING WITH HOPPSCOTCH
 
-- Create the entities & adjust depends on the app 
+- Create the entities & adjust depends on the app ^_^
 
 - Create the DTOs
 
-- Implement database context (with Entity Framework Core)
+- Implement database context (with Entity Framework Core) ^_^
 
 - Model Builder to apply relationships
 
 - Do Repository Design Pattern
 
-- Create Controllers & Adjust HTTP Endpoints
+- Create Controllers & Adjust HTTP Endpoints ^_^
 
-- Database Connection with Npgsql.EntityFramework.PostgreSQL
+- Database Connection with Npgsql.EntityFramework.PostgreSQL ^_^
 
 - Implement Database Migrations (with EntityFrameworkCore.Design)
 
