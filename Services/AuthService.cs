@@ -6,15 +6,17 @@ using Microsoft.IdentityModel.Tokens;
 
 public class AuthService:AuthInterface {
   private readonly DbContext _context;
-  public AuthService(DbContext context)
+  private readonly IConfiguration _config;
+  public AuthService(DbContext context, IConfiguration config)
   {
     _context = context;
+    _config = config;
   }
 
   private string GenerateToken(int id, string username)
   {
-    //create the JWT Settings later for the secret key paguwi mo hashsahahaha
-    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("secretkeyheredontforget")); 
+    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("Jwt:Key").Value!)); 
+
 
   }
 
