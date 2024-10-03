@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Security.Claims;
+//------------------
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//JWT
+//JWT AUTHENTICATION
 builder.Services.AddAuthentication(opt =>
 {
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -30,9 +33,18 @@ builder.Services.AddAuthentication(opt =>
     };
 });
 
+//AUTHORIZATION
+builder.Services.AddAuthorization(opt =>
+{
+    opt.AddPolicy("admin", policy => policy.RequireClaim(ClaimTypes.Role, "admin"));
+});
+//SERVICES (REPO)
+builder.Services.AddScoped<IAuthInterface, AuthService>();
 //DB Context
 builder.Services.AddDbContext<SMSDbContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")));
 
+//CONTROLLERS
+builder.Services.AddControllers();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -42,6 +54,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.MapControllers();
+app.UseAuthorization();
 app.UseHttpsRedirection();
 
 app.Run();
