@@ -9,6 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 using sms_server.Mapping;
 using sms_server.Dtos;
 using sms_server.Entities;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 public class AuthService : IAuthInterface
 {
@@ -21,12 +23,12 @@ public class AuthService : IAuthInterface
     }
 
     //Signup Method
-    public async Task<AuthResponse> SignUp(AuthDto authDto)
+    public async Task<AuthResponse> SignUp(SignUpDto SignUpDto)
     {
         // check first if user exists
         try
         {
-            var user = await context.Users.FirstOrDefaultAsync(u => u.Email == authDto.email);
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Email == SignUpDto.email);
             if (user != null)
             {
                 return new AuthResponse()
@@ -39,22 +41,22 @@ public class AuthService : IAuthInterface
             else
             {
                 //create the user in the database
-                 BCrypt.Net.BCrypt.HashPassword(authDto.password);
+                 BCrypt.Net.BCrypt.HashPassword(SignUpDto.password);
 
                 // UserEntity newUser = new UserEntity()
                 // {
-                //     Email = authDto.email,
-                //     Password = authDto.password,
-                //     Role = authDto.role
+                //     Email = SignUpDto.email,
+                //     Password = SignUpDto.password,
+                //     Role = SignUpDto.role
                 // };
 
-                await context.Users.AddAsync(authDto.toAuthEntity());
+                await context.Users.AddAsync(SignUpDto.toAuthEntity());
                 await context.SaveChangesAsync();
                 return new AuthResponse()
                 {
                   Success = true,
                   Message = "User created successfully",
-                  User = authDto.toAuthEntity()
+                  User = SignUpDto.toAuthEntity()
                 };
             }
         }
@@ -69,13 +71,25 @@ public class AuthService : IAuthInterface
         }
 
     }
+    public async Task<string> Login(LoginDto loginDto)
+    {
+      var user = await context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.email);
+      if(user == null)
+      {
+        return "User does not exist."; 
+      }
+
+    }
 
 
-    // private string GenerateToken(int id, string username)
-    // {
-    //   var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("Jwt:Key").Value!)); 
-    //   
-    //
-    // }
+    private string GenerateToken(int id, string username)
+    {
+      List<Claim> claims = new List<Claim>(){
+        new Claim(JwtRegisteredClaimNames.Email)
+      };
+      var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("Jwt:Key").Value!)); 
+      
+
+    }
 
 }
