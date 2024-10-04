@@ -14,7 +14,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("signup")]
-    public async Task<IActionResult> SignUp(AuthDto authDto)
+    public async Task<IActionResult> SignUp(SignUpDto authDto)
     {
         try
         {

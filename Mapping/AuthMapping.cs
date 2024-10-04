@@ -8,7 +8,7 @@ namespace sms_server.Mapping;
 public static class AuthMapping {
 
   
-  public static UserEntity toAuthEntity(this AuthDto userDto)
+  public static UserEntity toAuthEntity(this SignUpDto userDto)
   {
     return new UserEntity()
     {
