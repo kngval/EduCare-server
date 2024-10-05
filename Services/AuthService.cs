@@ -98,7 +98,7 @@ public class AuthService : IAuthInterface
         new Claim(JwtRegisteredClaimNames.Email,email),
       };
       var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("Jwt:Key").Value!)); 
-      var credentials = new SigningCredentials(securityKey,SecurityAlgorithms.HmacSha512Signature);      
+      var credentials = new SigningCredentials(securityKey,SecurityAlgorithms.HmacSha256Signature);      
       var tokenDescriptor = new SecurityTokenDescriptor {
         Subject = new ClaimsIdentity(claims),
         SigningCredentials = credentials,
