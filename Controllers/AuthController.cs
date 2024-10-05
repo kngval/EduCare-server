@@ -40,4 +40,21 @@ public class AuthController : ControllerBase
           return StatusCode(500,"An unexpected error occured.");
         }
     }
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(LoginDto loginDto)
+    {
+      if(string.IsNullOrEmpty(loginDto.email) || string.IsNullOrWhiteSpace(loginDto.email))
+      {
+        return BadRequest("Email is required");
+      }
+      if(string.IsNullOrEmpty(loginDto.password) || string.IsNullOrWhiteSpace(loginDto.password))
+      {
+        return BadRequest("Email is required");
+      }
+      
+      var token = await authService.Login(loginDto);
+
+      return Ok(token);
+      
+    }
 }
