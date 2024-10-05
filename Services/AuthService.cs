@@ -16,10 +16,12 @@ public class AuthService : IAuthInterface
 {
     private readonly SMSDbContext context;
     private readonly IConfiguration config;
-    public AuthService(SMSDbContext context, IConfiguration config)
+    private readonly ILogger<AuthService> logger;
+    public AuthService(SMSDbContext context, IConfiguration config,ILogger<AuthService> logger)
     {
         this.context = context;
         this.config = config;
+        this.logger = logger;
     }
 
     //Signup Method
@@ -35,22 +37,15 @@ public class AuthService : IAuthInterface
                 {
                   Success = false,
                   Message = "User already exists",
-                  User = null
                 };
             }
             else
             {
                 //create the user in the database
-                 BCrypt.Net.BCrypt.HashPassword(SignUpDto.password);
-
-                // UserEntity newUser = new UserEntity()
-                // {
-                //     Email = SignUpDto.email,
-                //     Password = SignUpDto.password,
-                //     Role = SignUpDto.role
-                // };
-
-                await context.Users.AddAsync(SignUpDto.toAuthEntity());
+                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(SignUpDto.password);
+                var userEntity = SignUpDto.toAuthEntity();
+                userEntity.Password = hashedPassword;
+                await context.Users.AddAsync(userEntity);
                 await context.SaveChangesAsync();
                 return new AuthResponse()
                 {
@@ -61,7 +56,7 @@ public class AuthService : IAuthInterface
             }
         }
         catch(DbUpdateException dbEx){
-          Console.WriteLine(dbEx.Message);
+          logger.LogError($"Error SigningUp User '{SignUpDto.email}' : {dbEx.Message}");
           throw;
         }
         catch (Exception ex)
@@ -73,22 +68,48 @@ public class AuthService : IAuthInterface
     }
     public async Task<string> Login(LoginDto loginDto)
     {
+      try{
       var user = await context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.email);
       if(user == null)
       {
         return "User does not exist."; 
+      } else {
+       var isPasswordCorrect = BCrypt.Net.BCrypt.Verify(loginDto.password,user.Password);
+       if(!isPasswordCorrect)
+       {
+         return "Wrong password";
+       }
+
+       return GenerateToken(user.Id,user.Email,user.Role);
+      } 
+      } catch(Exception ex)
+      {
+         logger.LogError(ex,"Error logging in"); 
+         throw;
       }
 
     }
 
 
-    private string GenerateToken(int id, string username)
+    private string GenerateToken(int id, string email,string role)
     {
       List<Claim> claims = new List<Claim>(){
-        new Claim(JwtRegisteredClaimNames.Email)
+        new Claim(JwtRegisteredClaimNames.Sub,id.ToString()),
+        new Claim(JwtRegisteredClaimNames.Email,email),
       };
       var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("Jwt:Key").Value!)); 
-      
+      var credentials = new SigningCredentials(securityKey,SecurityAlgorithms.HmacSha512Signature);      
+      var tokenDescriptor = new SecurityTokenDescriptor {
+        Subject = new ClaimsIdentity(claims),
+        SigningCredentials = credentials,
+        Issuer = config.GetSection("Jwt:Issuer").Value,
+        Audience = config.GetSection("Jwt:Audience").Value
+      };
+
+      var tokenHandler = new JwtSecurityTokenHandler();
+      var token = tokenHandler.CreateToken(tokenDescriptor);
+
+      return tokenHandler.WriteToken(token);
 
     }
 
