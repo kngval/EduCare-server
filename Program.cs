@@ -42,7 +42,13 @@ builder.Services.AddAuthorization(opt =>
 builder.Services.AddScoped<IAuthInterface, AuthService>();
 //DB Context
 builder.Services.AddDbContext<SMSDbContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")));
-
+builder.Services.AddCors(opt => {
+    opt.AddPolicy("AllowSpecificOrigin", policy => {
+         policy.WithOrigins("http://localhost:5173")
+         .AllowAnyHeader()
+         .AllowAnyMethod();
+        });
+    });
 //CONTROLLERS
 builder.Services.AddControllers();
 var app = builder.Build();
@@ -53,7 +59,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors();
 app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();

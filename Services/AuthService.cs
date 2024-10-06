@@ -71,8 +71,7 @@ public class AuthService : IAuthInterface
       try{
       var user = await context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.email);
       if(user == null)
-      {
-        return "User does not exist."; 
+      { return "User does not exist."; 
       } else {
        var isPasswordCorrect = BCrypt.Net.BCrypt.Verify(loginDto.password,user.Password);
        if(!isPasswordCorrect)
