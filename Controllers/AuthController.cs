@@ -18,20 +18,6 @@ public class AuthController : ControllerBase
     {
         try
         {
-
-            if (string.IsNullOrWhiteSpace(authDto.email) || string.IsNullOrWhiteSpace(authDto.email))
-            {
-                return BadRequest("Invalid Email");
-            }
-            if (string.IsNullOrWhiteSpace(authDto.password) || string.IsNullOrWhiteSpace(authDto.password))
-            {
-                return BadRequest("Invalid Password");
-            }
-            if (string.IsNullOrWhiteSpace(authDto.role) || string.IsNullOrWhiteSpace(authDto.role))
-            {
-                return BadRequest("Role is required");
-            }
-
            var res = await authService.SignUp(authDto);
             if(res == null)
             {
