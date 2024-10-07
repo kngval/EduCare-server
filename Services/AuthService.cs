@@ -17,7 +17,7 @@ public class AuthService : IAuthInterface
     private readonly SMSDbContext context;
     private readonly IConfiguration config;
     private readonly ILogger<AuthService> logger;
-    public AuthService(SMSDbContext context, IConfiguration config,ILogger<AuthService> logger)
+    public AuthService(SMSDbContext context, IConfiguration config, ILogger<AuthService> logger)
     {
         this.context = context;
         this.config = config;
@@ -35,8 +35,9 @@ public class AuthService : IAuthInterface
             {
                 return new AuthResponse()
                 {
-                  Success = false,
-                  Message = "User already exists",
+                    Success = false,
+                    Message = $"Email {SignUpDto.email} already exists",
+                    Field = "email"
                 };
             }
             else
@@ -49,66 +50,89 @@ public class AuthService : IAuthInterface
                 await context.SaveChangesAsync();
                 return new AuthResponse()
                 {
-                  Success = true,
-                  Message = "User created successfully",
-                  User = SignUpDto.toAuthEntity()
+                    Success = true,
+                    Message = $"User created successfully",
+                    User = SignUpDto.toAuthEntity()
                 };
             }
         }
-        catch(DbUpdateException dbEx){
-          logger.LogError($"Error SigningUp User '{SignUpDto.email}' : {dbEx.Message}");
-          throw;
+        catch (DbUpdateException dbEx)
+        {
+            logger.LogError($"Error SigningUp User '{SignUpDto.email}' : {dbEx.Message}");
+            throw;
         }
         catch (Exception ex)
         {
-         Console.WriteLine(ex.Message);
-         throw;
+            Console.WriteLine(ex.Message);
+            throw;
         }
 
     }
-    public async Task<string> Login(LoginDto loginDto)
+    public async Task<AuthResponse> Login(LoginDto loginDto)
     {
-      try{
-      var user = await context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.email);
-      if(user == null)
-      { return "User does not exist."; 
-      } else {
-       var isPasswordCorrect = BCrypt.Net.BCrypt.Verify(loginDto.password,user.Password);
-       if(!isPasswordCorrect)
-       {
-         return "Wrong password";
-       }
+        try
+        {
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.email);
+            if (user == null)
+            {
+                return new AuthResponse()
+                {
+                    Success = false,
+                    Message = "User does not exist",
+                    Field = "email"
+                };
+            }
+            else
+            {
+                var isPasswordCorrect = BCrypt.Net.BCrypt.Verify(loginDto.password, user.Password);
+                if (!isPasswordCorrect)
+                {
+                    return new AuthResponse()
+                    {
+                        Success = false,
+                        Message = "Wrong password",
+                        Field = "password"
+                    };
+                }
 
-       return GenerateToken(user.Id,user.Email,user.Role);
-      } 
-      } catch(Exception ex)
-      {
-         logger.LogError(ex,"Error logging in"); 
-         throw;
-      }
+                var token = GenerateToken(user.Id, user.Email, user.Role);
+                return new AuthResponse()
+                {
+                    Success = true,
+                    Message = "Login success!",
+                    Token = token
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error logging in");
+            throw;
+        }
 
     }
 
 
-    private string GenerateToken(int id, string email,string role)
+    private string GenerateToken(int id, string email, string role)
     {
-      List<Claim> claims = new List<Claim>(){
+        List<Claim> claims = new List<Claim>(){
         new Claim(JwtRegisteredClaimNames.Sub,id.ToString()),
         new Claim(JwtRegisteredClaimNames.Email,email),
       };
-      var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("Jwt:Key").Value!)); 
-      var credentials = new SigningCredentials(securityKey,SecurityAlgorithms.HmacSha256Signature);      
-      var tokenDescriptor = new SecurityTokenDescriptor {
-        Subject = new ClaimsIdentity(claims),
-        SigningCredentials = credentials,
-        Issuer = config.GetSection("Jwt:Issuer").Value,
-        Audience = config.GetSection("Jwt:Audience").Value
-      };
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("Jwt:Key").Value!));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            SigningCredentials = credentials,
+            Issuer = config.GetSection("Jwt:Issuer").Value,
+            Audience = config.GetSection("Jwt:Audience").Value
+        };
 
-      var tokenHandler = new JwtSecurityTokenHandler();
-      var token = tokenHandler.CreateToken(tokenDescriptor);
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.CreateToken(tokenDescriptor);
 
-      return tokenHandler.WriteToken(token);
+        return tokenHandler.WriteToken(token);
 
     }
 

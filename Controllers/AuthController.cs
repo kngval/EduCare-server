@@ -27,6 +27,10 @@ public class AuthController : ControllerBase
             {
                 return BadRequest("Invalid Password");
             }
+            if (string.IsNullOrWhiteSpace(authDto.role) || string.IsNullOrWhiteSpace(authDto.role))
+            {
+                return BadRequest("Role is required");
+            }
 
            var res = await authService.SignUp(authDto);
             if(res == null)
