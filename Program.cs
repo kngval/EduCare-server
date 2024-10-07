@@ -41,7 +41,16 @@ builder.Services.AddAuthorization(opt =>
 //SERVICES (REPO)
 builder.Services.AddScoped<IAuthInterface, AuthService>();
 //DB Context
-builder.Services.AddDbContext<SMSDbContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")));
+builder.Services.AddDbContext<SMSDbContext>(opt => {
+      
+    var dbConnection = Environment.GetEnvironmentVariable("SMS_CONNECTION");
+    if(string.IsNullOrEmpty(dbConnection))
+    {
+      throw new InvalidOperationException("Invalid Database Connection string");
+    }
+    opt.UseNpgsql(dbConnection);
+
+    });
 builder.Services.AddCors(opt => {
     opt.AddPolicy("AllowSpecificOrigin", policy => {
          policy.WithOrigins("http://localhost:5173")
