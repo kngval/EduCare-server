@@ -31,6 +31,33 @@ public class AuthService : IAuthInterface
         try
         {
             var user = await context.Users.FirstOrDefaultAsync(u => u.Email == SignUpDto.email);
+
+            if (string.IsNullOrWhiteSpace(SignUpDto.email) || string.IsNullOrWhiteSpace(SignUpDto.email))
+            {
+                return new AuthResponse()
+                {
+                    Success = false,
+                    Message = "Email field is required",
+                    Field = "email"
+                };
+            }
+            if (string.IsNullOrWhiteSpace(SignUpDto.password) || string.IsNullOrWhiteSpace(SignUpDto.password))
+            {
+                return new AuthResponse()
+                {
+                    Success = false,
+                    Message = "Password field is required",
+                    Field = "password"
+                };
+            }
+            if (string.IsNullOrWhiteSpace(SignUpDto.role) || string.IsNullOrWhiteSpace(SignUpDto.role))
+            {
+                return new AuthResponse()
+                {
+                    Success = false,
+                    Message = "Password field is required"
+                };
+            }
             if (user != null)
             {
                 return new AuthResponse()
