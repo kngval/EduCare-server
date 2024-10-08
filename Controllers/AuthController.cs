@@ -33,18 +33,20 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginDto loginDto)
     {
-      if(string.IsNullOrEmpty(loginDto.email) || string.IsNullOrWhiteSpace(loginDto.email))
-      {
-        return BadRequest("Email is required");
-      }
-      if(string.IsNullOrEmpty(loginDto.password) || string.IsNullOrWhiteSpace(loginDto.password))
-      {
-        return BadRequest("Email is required");
-      }
       
-      var token = await authService.Login(loginDto);
+      try{
 
-      return Ok(token);
+      var response = await authService.Login(loginDto);
+      if(response.Success == false)
+      {
+        return BadRequest(response);
+      }
+      return Ok(response);
+      } catch(Exception ex)
+      {
+        Console.WriteLine(ex.Message);
+        return StatusCode(500,"An unexpected error occured.");
+      }
       
     }
 }
