@@ -35,12 +35,11 @@ public class AuthController : ControllerBase
     {
       
       try{
-
       var response = await authService.Login(loginDto);
       if(response.Success == false)
       {
         return BadRequest(response);
-      }
+      } 
       return Ok(response);
       } catch(Exception ex)
       {
