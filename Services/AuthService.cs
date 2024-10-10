@@ -30,7 +30,6 @@ public class AuthService : IAuthInterface
         // check first if user exists
         try
         {
-            var user = await context.Users.FirstOrDefaultAsync(u => u.Email == SignUpDto.email);
 
             if (string.IsNullOrWhiteSpace(SignUpDto.email) || string.IsNullOrWhiteSpace(SignUpDto.email))
             {
@@ -55,9 +54,13 @@ public class AuthService : IAuthInterface
                 return new AuthResponse()
                 {
                     Success = false,
-                    Message = "Password field is required"
+                    Message = "Please select a role",
+                    Field = "role"
                 };
             }
+
+
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Email == SignUpDto.email);
             if (user != null)
             {
                 return new AuthResponse()
@@ -95,6 +98,97 @@ public class AuthService : IAuthInterface
         }
 
     }
+
+    //admin signup service
+    public async Task<AuthResponse> SignUpAdmin(AdminDto adminDto)
+    {
+        if (string.IsNullOrEmpty(adminDto.code))
+        {
+            return new AuthResponse()
+            {
+                Success = false,
+                Message = "Code is required for teacher/admin access",
+                Field = "code"
+            };
+        }
+        if (string.IsNullOrWhiteSpace(adminDto.email) || string.IsNullOrWhiteSpace(adminDto.email))
+        {
+            return new AuthResponse()
+            {
+                Success = false,
+                Message = "Email field is required",
+                Field = "email"
+            };
+        }
+        if (string.IsNullOrWhiteSpace(adminDto.password) || string.IsNullOrWhiteSpace(adminDto.password))
+        {
+            return new AuthResponse()
+            {
+                Success = false,
+                Message = "Password field is required",
+                Field = "password"
+            };
+        }
+        if (string.IsNullOrWhiteSpace(adminDto.role) || string.IsNullOrWhiteSpace(adminDto.role))
+        {
+            return new AuthResponse()
+            {
+                Success = false,
+                Message = "Please select a role",
+                Field = "role"
+            };
+        }
+
+        var userCode = await context.UserCode.FirstOrDefaultAsync(c => c.Code == adminDto.code);
+        if (userCode == null || userCode.Available == false)
+        {
+            return new AuthResponse()
+            {
+                Success = false,
+                Message = "Invalid Code",
+                Field = "code"
+            };
+        }
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == adminDto.email);
+
+        if (user != null)
+        {
+            return new AuthResponse()
+            {
+                Success = false,
+                Message = "Email already exists",
+                Field = "email"
+            };
+        }
+        else
+        {
+
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(adminDto.password);
+            var userEntity = new UserEntity()
+            {
+                Email = adminDto.email,
+                Password = passwordHash,
+                Role = adminDto.role
+            };
+
+            await context.Users.AddAsync(userEntity);
+            await context.SaveChangesAsync();
+            userCode.UserId = userEntity.Id;
+            userCode.Available = false;
+
+            await context.SaveChangesAsync();
+
+            return new AuthResponse()
+            {
+                Success = true,
+                Message = "User created successfully !"
+            };
+        }
+
+
+    }
+
+    //Login service
     public async Task<AuthResponse> Login(LoginDto loginDto)
     {
         try
@@ -157,6 +251,100 @@ public class AuthService : IAuthInterface
 
     }
 
+    public async Task<AuthResponse> LoginAdmin(AdminDto adminDto)
+    {
+        if (string.IsNullOrEmpty(adminDto.code))
+        {
+            return new AuthResponse()
+            {
+                Success = false,
+                Message = "Code is required for teacher/admin access",
+                Field = "code"
+            };
+        }
+        if (string.IsNullOrWhiteSpace(adminDto.email) || string.IsNullOrWhiteSpace(adminDto.email))
+        {
+            return new AuthResponse()
+            {
+                Success = false,
+                Message = "Email field is required",
+                Field = "email"
+            };
+        }
+        if (string.IsNullOrWhiteSpace(adminDto.password) || string.IsNullOrWhiteSpace(adminDto.password))
+        {
+            return new AuthResponse()
+            {
+                Success = false,
+                Message = "Password field is required",
+                Field = "password"
+            };
+        }
+        if (string.IsNullOrWhiteSpace(adminDto.role) || string.IsNullOrWhiteSpace(adminDto.role))
+        {
+            return new AuthResponse()
+            {
+                Success = false,
+                Message = "Please select a role",
+                Field = "role"
+            };
+        }
+
+        var userCode = await context.UserCode.FirstOrDefaultAsync(c => c.Code == adminDto.code);
+        if (userCode == null || userCode.Available == true)
+        {
+            return new AuthResponse()
+            {
+                Success = false,
+                Message = "Invalid Code",
+                Field = "code"
+            };
+        }
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == adminDto.email);
+        if (user == null)
+        {
+
+            return new AuthResponse()
+            {
+                Success = false,
+                Message = "User does not exist",
+                Field = "email"
+            };
+        }
+
+        if(userCode.UserId != user.Id)
+        {
+           
+            return new AuthResponse()
+            {
+                Success = false,
+                Message = "Code already used",
+                Field = "code"
+            };
+        }
+        
+        var isPasswordCorrect = BCrypt.Net.BCrypt.Verify(adminDto.password,user.Password);
+        if(!isPasswordCorrect)
+        {
+
+            return new AuthResponse()
+            {
+                Success = false,
+                Message = "Incorrect password.",
+                Field = "password"
+            };
+        }
+
+        var token = GenerateToken(user.Id,user.Email,user.Role);
+
+        return new AuthResponse()
+        {
+          Success = true,
+          Message = "Login Successful !",
+          Token = token
+        };
+
+    }
 
     private string GenerateToken(int id, string email, string role)
     {

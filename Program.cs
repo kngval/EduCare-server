@@ -32,8 +32,6 @@ builder.Services.AddAuthentication(opt =>
         ValidAudience = builder.Configuration["Jwt:Audience"]
     };
 });
-
-//AUTHORIZATION
 builder.Services.AddAuthorization(opt =>
 {
     opt.AddPolicy("admin", policy => policy.RequireClaim(ClaimTypes.Role, "admin"));
@@ -58,6 +56,9 @@ builder.Services.AddCors(opt => {
          .AllowAnyMethod();
         });
     });
+
+
+
 //CONTROLLERS
 builder.Services.AddControllers();
 var app = builder.Build();
