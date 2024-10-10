@@ -19,7 +19,7 @@ public class AuthController : ControllerBase
         try
         {
            var res = await authService.SignUp(authDto);
-            if(res == null)
+            if(res.Success == false)
             {
               return Conflict(res);
             }
@@ -29,6 +29,27 @@ public class AuthController : ControllerBase
           Console.WriteLine(ex.Message);
           return StatusCode(500,"An unexpected error occured.");
         }
+    }
+    [HttpPost("signup/admin")]
+    public async Task<IActionResult> SignUpAdmin(AdminDto adminDto)
+    {
+      if(adminDto.role != "admin" && adminDto.role != "teacher")
+      {
+        return BadRequest("Not allowed !");
+      }
+      try{
+        var response = await authService.SignUpAdmin(adminDto); 
+        if(response.Success == false)
+        {
+          return BadRequest(response);
+        }
+        return Ok(response);
+      }catch(Exception ex)
+      {
+        Console.WriteLine(ex.Message);
+        return StatusCode(500,"An unexpected error occured.");
+      }
+
     }
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginDto loginDto)
@@ -47,5 +68,27 @@ public class AuthController : ControllerBase
         return StatusCode(500,"An unexpected error occured.");
       }
       
+    }
+    [HttpPost("login/admin")]
+    public async Task<IActionResult> LoginAdmin(AdminDto adminDto)
+    {
+      if(adminDto.role != "admin" && adminDto.role != "teacher")
+      {
+        return BadRequest("Not allowed !");
+      }
+      try{
+        var response = await authService.LoginAdmin(adminDto);
+        if(response.Success == false)
+        {
+          return BadRequest(response);
+        }
+
+        return Ok(response);
+
+      } catch(Exception ex)
+      {
+        Console.WriteLine(ex.Message);
+        return StatusCode(500,"An unexpected error occured.");
+      }
     }
 }
