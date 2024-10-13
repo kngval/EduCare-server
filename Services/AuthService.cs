@@ -1,8 +1,7 @@
 
 
 using System.Text;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc; using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 
