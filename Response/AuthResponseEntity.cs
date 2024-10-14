@@ -1,5 +1,5 @@
-
-namespace sms_server.Entities;
+using sms_server.Entities;
+namespace sms_server.Response;
 
 public class AuthResponse {
   public bool Success {get;set;}
