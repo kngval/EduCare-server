@@ -10,6 +10,7 @@ public class SMSDbContext : DbContext
 
     public DbSet<UserEntity> Users => Set<UserEntity>();
     public DbSet<UserCodeEntity> UserCode => Set<UserCodeEntity>();
+    public DbSet<UserInfoEntity> UserInfo => Set<UserInfoEntity>();
 
     //Don't forget to put the model builder below _ ;
 
@@ -20,5 +21,10 @@ public class SMSDbContext : DbContext
             .WithMany()                         // No navigation on UserEntity
             .HasForeignKey(uc => uc.UserId);
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<UserInfoEntity>()
+          .HasOne<UserEntity>()
+          .WithMany()
+          .HasForeignKey(ui => ui.UserId);
     }
 }
