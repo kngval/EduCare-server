@@ -2,11 +2,9 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using sms_server.Dtos;
-
 [ApiController]
 [Route("api/auth")]
-public class AuthController : ControllerBase
-{
+public class AuthController : ControllerBase {
     private readonly IAuthInterface authService;
     public AuthController(IAuthInterface authService)
     {
