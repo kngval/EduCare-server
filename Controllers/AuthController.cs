@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using sms_server.Dtos;
-[Authorize]
 [ApiController]
 [Route("api/auth")]
 public class AuthController : ControllerBase {
