@@ -11,10 +11,14 @@ public class UserInfoService:IUserInfoInterface {
     this.context = context; 
 
   }
+    public UserInfoEntity? GetUserInfo(int id)
+    {
+      return context.UserInfo.FirstOrDefault(u => u.UserId == id); 
+    }
 
     public async Task<UserInfoResponse> CreateUserInfo(UserInfoDto userInfo)
     {
-      var user = context.UserInfo.FirstOrDefault(u => u.UserId == userInfo.userId);
+      var user = GetUserInfo(userInfo.userId);
 
       if(user == null)
       {
@@ -38,11 +42,14 @@ public class UserInfoService:IUserInfoInterface {
         user.LastName = userInfo.LastName;
         user.Birthdate = userInfo.Birthdate;
         user.UserId = userInfo.userId;
+        await context.SaveChangesAsync();
+
+        return new UserInfoResponse()
+        {
+          Success = true,
+          Message = "User Information updated successfully !"
+        };
       }
     }
 
-    public async Task<UserInfoResponse> GetUserInfo(int id)
-    {
-        throw new NotImplementedException();
-    }
 }
