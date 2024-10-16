@@ -3,7 +3,7 @@
 public class UserInfoEntity {
   public int Id {get;set;}
   public string FirstName {get;set;} = string.Empty;
-  public string? Middlename {get;set;} 
+  public string? MiddleName {get;set;} 
   public string LastName {get;set;} = string.Empty; 
   public DateOnly Birthdate {get;set;}
 
