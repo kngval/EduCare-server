@@ -1,6 +1,6 @@
 
 using sms_server.Dtos;
 public interface IUserInfoInterface {
-  Task<UserInfoResponse> GetUserInfo(int id);
+  UserInfoEntity? GetUserInfo(int id);
   Task<UserInfoResponse> CreateUserInfo(UserInfoDto userInfo);
 }
