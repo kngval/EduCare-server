@@ -13,15 +13,42 @@ public class UserInfoService : IUserInfoInterface
         this.context = context;
 
     }
-    public UserInfoEntity? GetUserInfo(int id)
+    public UserInfoEntity? FetchUser(int id)
     {
         return context.UserInfo.FirstOrDefault(u => u.UserId == id);
     }
 
     public async Task<UserInfoResponse> CreateUserInfo(UserInfoDto userInfo)
     {
+        if(string.IsNullOrEmpty(userInfo.FirstName))
+        {
+          return new UserInfoResponse()
+          {
+            Success = false,
+            Message = "First Name is required.",
+            Field = "firstName"
+          };
+        }
 
-        var user = GetUserInfo(userInfo.userId);
+        if(string.IsNullOrEmpty(userInfo.LastName))
+        {
+          return new UserInfoResponse()
+          {
+            Success = false,
+            Message = "Last Name is required.",
+            Field = "firstName"
+          };
+        }
+        if(string.IsNullOrEmpty(userInfo.FirstName))
+        {
+          return new UserInfoResponse()
+          {
+            Success = false,
+            Message = "First Name is required.",
+            Field = "firstName"
+          };
+        }
+       var user = FetchUser(userInfo.userId);
 
         if (user == null)
         {
