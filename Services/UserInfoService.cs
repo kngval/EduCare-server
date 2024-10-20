@@ -1,6 +1,7 @@
 
 
 
+using System.Security.Claims;
 using sms_server.Dtos;
 
 public class UserInfoService : IUserInfoInterface
@@ -57,6 +58,7 @@ public class UserInfoService : IUserInfoInterface
                 FirstName = userInfo.FirstName,
                 MiddleName = userInfo.MiddleName,
                 LastName = userInfo.LastName,
+                Role = userInfo.Role,
                 Birthdate = userInfo.Birthdate,
                 UserId = userInfo.userId
             });

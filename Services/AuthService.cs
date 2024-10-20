@@ -352,6 +352,7 @@ public class AuthService : IAuthInterface
         List<Claim> claims = new List<Claim>(){
         new Claim(JwtRegisteredClaimNames.Sub,id.ToString()),
         new Claim(JwtRegisteredClaimNames.Email,email),
+        new Claim(ClaimTypes.Role,role)
       };
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("Jwt:Key").Value!));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
