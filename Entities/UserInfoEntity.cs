@@ -5,6 +5,7 @@ public class UserInfoEntity {
   public string FirstName {get;set;} = string.Empty;
   public string? MiddleName {get;set;} 
   public string LastName {get;set;} = string.Empty; 
+  public required string Role {get;set;} 
   public DateOnly Birthdate {get;set;}
 
   public int UserId {get;set;} //foreign key for UserEntity.Id
