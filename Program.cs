@@ -1,15 +1,15 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
+using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
-using System.Text; using System.Security.Claims;
 //------------------
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-
 //JWT AUTHENTICATION
 builder.Services.AddAuthentication(opt =>
 {
@@ -28,32 +28,88 @@ builder.Services.AddAuthentication(opt =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
         ValidAudience = builder.Configuration["Jwt:Audience"]
     };
+    // opt.Events = new JwtBearerEvents
+    // {
+    //     OnMessageReceived = (context) =>
+    //
+    //     {
+    //         if (context.Request.Path.StartsWithSegments("/api/auth/login") ||
+    //                        context.Request.Path.StartsWithSegments("/api/auth/signup"))
+    //         {
+    //             return Task.CompletedTask; // Allow the request without checking for a token
+    //         }
+    //
+    //         var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+    //
+    //         if (string.IsNullOrEmpty(token))
+    //         {
+    //             context.NoResult();
+    //             context.Response.StatusCode = 401;
+    //             context.Response.ContentType = "application/json";
+    //             return context.Response.WriteAsync("{\"error\": \"Authorization token is missing.\"}");
+    //         }
+    //         return Task.CompletedTask;
+    //     },
+    //
+    //
+    //     OnAuthenticationFailed = context =>
+    //     {
+    //         // Log or inspect context.Exception here
+    //         var message = context.Exception.Message; // Log the exception message for debugging
+    //
+    //         context.Response.StatusCode = 401;
+    //         context.Response.ContentType = "application/json";
+    //         var jsonMessage = context.Exception is SecurityTokenExpiredException
+    //             ? "Token has expired."
+    //             : "Invalid token.";
+    //
+    //         return context.Response.WriteAsync($"{{\"error\": \"{jsonMessage}\", \"details\": \"{message}\"}}");
+    //     },
+    //
+    //     // Called when authorization fails
+    //     OnChallenge = context =>
+    //     {
+    //         context.HandleResponse(); // Suppress the default unauthorized response
+    //
+    //         if (!context.Response.HasStarted)
+    //         {
+    //             context.Response.StatusCode = 401;
+    //             context.Response.ContentType = "application/json";
+    //             return context.Response.WriteAsync("{\"error\": \"You are not authorized to access this resource.\"}");
+    //         }
+    //         return Task.CompletedTask;
+    //     }
+    // };
 });
-builder.Services.AddAuthorization(opt =>
-{
-    opt.AddPolicy("admin", policy => policy.RequireClaim(ClaimTypes.Role, "admin"));
-});
+builder.Services.AddAuthorization();
+// builder.Services.AddAuthorization(opt =>
+// {
+//     opt.AddPolicy("admin", policy => policy.RequireClaim(ClaimTypes.Role, "admin"));
+// });
 //SERVICES (REPO)
 builder.Services.AddScoped<IAuthInterface, AuthService>();
 builder.Services.AddScoped<IUserInfoInterface, UserInfoService>();
 //DB Context
-builder.Services.AddDbContext<SMSDbContext>(opt => {
-      
+builder.Services.AddDbContext<SMSDbContext>(opt =>
+{
+
     var dbConnection = Environment.GetEnvironmentVariable("SMS_CONNECTION");
-    if(string.IsNullOrEmpty(dbConnection))
+    if (string.IsNullOrEmpty(dbConnection))
     {
-      throw new InvalidOperationException("Invalid Database Connection string");
+        throw new InvalidOperationException("Invalid Database Connection string");
     }
     opt.UseNpgsql(dbConnection);
 
+});
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("AllowSpecificOrigin", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+        .AllowAnyHeader()
+        .AllowAnyMethod();
     });
-builder.Services.AddCors(opt => {
-    opt.AddPolicy("AllowSpecificOrigin", policy => {
-         policy.WithOrigins("http://localhost:5173")
-         .AllowAnyHeader()
-         .AllowAnyMethod();
-        });
-    });
+});
 
 
 
@@ -61,11 +117,11 @@ builder.Services.AddCors(opt => {
 builder.Services.AddControllers();
 var app = builder.Build();
 
+app.UseHttpsRedirection();
 app.UseCors("AllowSpecificOrigin");
-app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseHttpsRedirection();
+app.MapControllers();
 
 app.Run();
 
