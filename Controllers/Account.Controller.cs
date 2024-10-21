@@ -29,10 +29,7 @@ public class AccountController : ControllerBase
           return BadRequest("Invalid token");
         }
         int userId = int.Parse(userIdClaimValue);
-        Console.WriteLine(userId);
-        Console.WriteLine("Hit");
         var user = userInfoService.FetchUser(userId);
-
         return Ok(user);
     }
 }
