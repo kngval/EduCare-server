@@ -21,44 +21,87 @@ public class UserInfoService : IUserInfoInterface
 
     public async Task<UserInfoResponse> CreateUserInfo(UserInfoDto userInfo)
     {
-        if(string.IsNullOrEmpty(userInfo.FirstName))
-        {
-          return new UserInfoResponse()
-          {
-            Success = false,
-            Message = "First Name is required.",
-            Field = "firstName"
-          };
-        }
 
-        if(string.IsNullOrEmpty(userInfo.LastName))
-        {
-          return new UserInfoResponse()
-          {
-            Success = false,
-            Message = "Last Name is required.",
-            Field = "firstName"
-          };
-        }
-        if(string.IsNullOrEmpty(userInfo.FirstName))
-        {
-          return new UserInfoResponse()
-          {
-            Success = false,
-            Message = "First Name is required.",
-            Field = "firstName"
-          };
-        }
-       var user = FetchUser(userInfo.userId);
+        var user = FetchUser(userInfo.userId);
 
         if (user == null)
         {
+            if (string.IsNullOrEmpty(userInfo.FirstName))
+            {
+                return new UserInfoResponse()
+                {
+                    Success = false,
+                    Message = "First Name is required.",
+                    Field = "firstName"
+                };
+            }
+
+            if (string.IsNullOrEmpty(userInfo.LastName))
+            {
+                return new UserInfoResponse()
+                {
+                    Success = false,
+                    Message = "Last Name is required.",
+                    Field = "firstName"
+                };
+            }
+            if (string.IsNullOrEmpty(userInfo.Role))
+            {
+                return new UserInfoResponse()
+                {
+                    Success = false,
+                    Message = "Role is required.",
+                };
+            }
+
+            if (string.IsNullOrEmpty(userInfo.Country))
+            {
+                return new UserInfoResponse()
+                {
+                    Success = false,
+                    Message = "Country is required.",
+                    Field = "country"
+                };
+            }
+
+            if (string.IsNullOrEmpty(userInfo.State))
+            {
+                return new UserInfoResponse()
+                {
+                    Success = false,
+                    Message = "State is required.",
+                    Field = "state"
+                };
+            }
+
+            if (string.IsNullOrEmpty(userInfo.City))
+            {
+                return new UserInfoResponse()
+                {
+                    Success = false,
+                    Message = "City is required.",
+                    Field = "city"
+                };
+            }
+
+            if (string.IsNullOrEmpty(userInfo.PostalCode))
+            {
+                return new UserInfoResponse()
+                {
+                    Success = false,
+                    Message = "Postal Code is required.",
+                    Field = "postal"
+                };
+            }
             var newUserInfo = await context.UserInfo.AddAsync(new UserInfoEntity()
             {
                 FirstName = userInfo.FirstName,
-                MiddleName = userInfo.MiddleName,
                 LastName = userInfo.LastName,
                 Role = userInfo.Role,
+                Country = userInfo.Country,
+                State = userInfo.State,
+                City = userInfo.City,
+                PostalCode = userInfo.PostalCode,
                 Birthdate = userInfo.Birthdate,
                 UserId = userInfo.userId
             });
@@ -72,11 +115,42 @@ public class UserInfoService : IUserInfoInterface
         }
         else
         {
-            user.FirstName = userInfo.FirstName;
-            user.MiddleName = userInfo.MiddleName;
-            user.LastName = userInfo.LastName;
-            user.Birthdate = userInfo.Birthdate;
-            user.UserId = userInfo.userId;
+            if (!string.IsNullOrEmpty(userInfo.FirstName))
+            {
+                user.FirstName = userInfo.FirstName;
+            }
+
+
+            if (!string.IsNullOrEmpty(userInfo.LastName))
+            {
+                user.LastName = userInfo.LastName;
+            }
+
+            if (userInfo.Birthdate != null)
+            {
+                user.Birthdate = userInfo.Birthdate;
+            }
+
+            if (!string.IsNullOrEmpty(userInfo.Role))
+            {
+                user.Role = userInfo.Role;
+            }
+            if (!string.IsNullOrEmpty(userInfo.Country))
+            {
+                user.Country = userInfo.Country;
+            }
+            if (!string.IsNullOrEmpty(userInfo.State))
+            {
+                user.State = userInfo.State;
+            }
+            if (!string.IsNullOrEmpty(userInfo.City))
+            {
+                user.City = userInfo.City;
+            }
+            if (!string.IsNullOrEmpty(userInfo.PostalCode))
+            {
+                user.PostalCode = userInfo.PostalCode;
+            }
             await context.SaveChangesAsync();
 
             return new UserInfoResponse()
