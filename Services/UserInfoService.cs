@@ -19,10 +19,10 @@ public class UserInfoService : IUserInfoInterface
         return context.UserInfo.FirstOrDefault(u => u.UserId == id);
     }
 
-    public async Task<UserInfoResponse> CreateUserInfo(UserInfoDto userInfo)
+    public async Task<UserInfoResponse> CreateUserInfo(UserInfoDto userInfo,int userId)
     {
 
-        var user = FetchUser(userInfo.userId);
+        var user = FetchUser(userId);
 
         if (user == null)
         {
@@ -103,7 +103,7 @@ public class UserInfoService : IUserInfoInterface
                 City = userInfo.City,
                 PostalCode = userInfo.PostalCode,
                 Birthdate = userInfo.Birthdate,
-                UserId = userInfo.userId
+                UserId = userId 
             });
 
             await context.SaveChangesAsync();
@@ -125,12 +125,6 @@ public class UserInfoService : IUserInfoInterface
             {
                 user.LastName = userInfo.LastName;
             }
-
-            if (userInfo.Birthdate != null)
-            {
-                user.Birthdate = userInfo.Birthdate;
-            }
-
             if (!string.IsNullOrEmpty(userInfo.Role))
             {
                 user.Role = userInfo.Role;
