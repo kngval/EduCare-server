@@ -32,7 +32,7 @@ public class AuthService : IAuthInterface
         try
         {
 
-            if (string.IsNullOrWhiteSpace(SignUpDto.email) || string.IsNullOrWhiteSpace(SignUpDto.email))
+            if (string.IsNullOrEmpty(SignUpDto.email) || string.IsNullOrWhiteSpace(SignUpDto.email))
             {
                 return new AuthResponse()
                 {
@@ -41,7 +41,7 @@ public class AuthService : IAuthInterface
                     Field = "email"
                 };
             }
-            if (string.IsNullOrWhiteSpace(SignUpDto.password) || string.IsNullOrWhiteSpace(SignUpDto.password))
+            if (string.IsNullOrEmpty(SignUpDto.password) || string.IsNullOrWhiteSpace(SignUpDto.password))
             {
                 return new AuthResponse()
                 {
@@ -50,7 +50,7 @@ public class AuthService : IAuthInterface
                     Field = "password"
                 };
             }
-            if (string.IsNullOrWhiteSpace(SignUpDto.role) || string.IsNullOrWhiteSpace(SignUpDto.role))
+            if (string.IsNullOrEmpty(SignUpDto.role) || string.IsNullOrWhiteSpace(SignUpDto.role))
             {
                 return new AuthResponse()
                 {
@@ -112,7 +112,7 @@ public class AuthService : IAuthInterface
                 Field = "code"
             };
         }
-        if (string.IsNullOrWhiteSpace(adminDto.email) || string.IsNullOrWhiteSpace(adminDto.email))
+        if (string.IsNullOrEmpty(adminDto.email) || string.IsNullOrWhiteSpace(adminDto.email))
         {
             return new AuthResponse()
             {
@@ -121,7 +121,7 @@ public class AuthService : IAuthInterface
                 Field = "email"
             };
         }
-        if (string.IsNullOrWhiteSpace(adminDto.password) || string.IsNullOrWhiteSpace(adminDto.password))
+        if (string.IsNullOrEmpty(adminDto.password) || string.IsNullOrWhiteSpace(adminDto.password))
         {
             return new AuthResponse()
             {
@@ -130,7 +130,7 @@ public class AuthService : IAuthInterface
                 Field = "password"
             };
         }
-        if (string.IsNullOrWhiteSpace(adminDto.role) || string.IsNullOrWhiteSpace(adminDto.role))
+        if (string.IsNullOrEmpty(adminDto.role) || string.IsNullOrWhiteSpace(adminDto.role))
         {
             return new AuthResponse()
             {
@@ -195,7 +195,7 @@ public class AuthService : IAuthInterface
         try
         {
             var user = await context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.email);
-            if (string.IsNullOrWhiteSpace(loginDto.email) || string.IsNullOrWhiteSpace(loginDto.email))
+            if (string.IsNullOrEmpty(loginDto.email) || string.IsNullOrWhiteSpace(loginDto.email))
             {
                 return new AuthResponse()
                 {
@@ -204,13 +204,23 @@ public class AuthService : IAuthInterface
                     Field = "email"
                 };
             }
-            if (string.IsNullOrWhiteSpace(loginDto.password) || string.IsNullOrWhiteSpace(loginDto.password))
+            if (string.IsNullOrEmpty(loginDto.password) || string.IsNullOrWhiteSpace(loginDto.password))
             {
                 return new AuthResponse()
                 {
                     Success = false,
                     Message = "Password field is required",
                     Field = "password"
+                };
+            }
+
+            if (string.IsNullOrEmpty(loginDto.role) || string.IsNullOrWhiteSpace(loginDto.role))
+            {
+                return new AuthResponse()
+                {
+                    Success = false,
+                    Message = "Role field is required",
+                    Field = "role"
                 };
             }
             if (user == null)
@@ -263,7 +273,7 @@ public class AuthService : IAuthInterface
                 Field = "code"
             };
         }
-        if (string.IsNullOrWhiteSpace(adminDto.email) || string.IsNullOrWhiteSpace(adminDto.email))
+        if (string.IsNullOrEmpty(adminDto.email) || string.IsNullOrWhiteSpace(adminDto.email))
         {
             return new AuthResponse()
             {
@@ -272,7 +282,7 @@ public class AuthService : IAuthInterface
                 Field = "email"
             };
         }
-        if (string.IsNullOrWhiteSpace(adminDto.password) || string.IsNullOrWhiteSpace(adminDto.password))
+        if (string.IsNullOrEmpty(adminDto.password) || string.IsNullOrWhiteSpace(adminDto.password))
         {
             return new AuthResponse()
             {
@@ -281,7 +291,7 @@ public class AuthService : IAuthInterface
                 Field = "password"
             };
         }
-        if (string.IsNullOrWhiteSpace(adminDto.role) || string.IsNullOrWhiteSpace(adminDto.role))
+        if (string.IsNullOrEmpty(adminDto.role) || string.IsNullOrWhiteSpace(adminDto.role))
         {
             return new AuthResponse()
             {
