@@ -12,7 +12,7 @@ public class UserInfoEntity {
   public string City {get;set;} = string.Empty;
   public string PostalCode {get;set;} = string.Empty;
   public string Gender {get;set;} = string.Empty;
-  public string? LRN {get;set;}
+  public string LRN {get;set;} = string.Empty;
   public int UserId {get;set;} //foreign key for UserEntity.Id
 
 }
