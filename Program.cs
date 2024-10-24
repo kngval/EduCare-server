@@ -7,8 +7,6 @@ using Microsoft.IdentityModel.Tokens;
 //------------------
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 //JWT AUTHENTICATION
 builder.Services.AddAuthentication(opt =>
@@ -36,7 +34,7 @@ builder.Services.AddAuthentication(opt =>
             if (context.Request.Path.StartsWithSegments("/api/auth/login") ||
                            context.Request.Path.StartsWithSegments("/api/auth/signup"))
             {
-                return Task.CompletedTask; // Allow the request without checking for a token
+                return Task.CompletedTask;
             }
 
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
@@ -62,6 +60,7 @@ builder.Services.AddAuthentication(opt =>
             var jsonMessage = context.Exception is SecurityTokenExpiredException
                 ? "Token has expired."
                 : "Invalid token.";
+
 
             return context.Response.WriteAsync($"{{\"error\": \"{jsonMessage}\", \"details\": \"{message}\"}}");
         },
