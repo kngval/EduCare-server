@@ -19,7 +19,7 @@ public class UserInfoService : IUserInfoInterface
         return context.UserInfo.FirstOrDefault(u => u.UserId == id);
     }
 
-    public async Task<UserInfoResponse> CreateUserInfo(UserInfoDto userInfo,int userId)
+    public async Task<UserInfoResponse> CreateUserInfo(UserInfoDto userInfo, int userId)
     {
 
         var user = FetchUser(userId);
@@ -32,7 +32,7 @@ public class UserInfoService : IUserInfoInterface
                 {
                     Success = false,
                     Message = "First Name is required.",
-                    Field = "firstName"
+                    Field = "personal"
                 };
             }
 
@@ -42,7 +42,7 @@ public class UserInfoService : IUserInfoInterface
                 {
                     Success = false,
                     Message = "Last Name is required.",
-                    Field = "firstName"
+                    Field = "personal"
                 };
             }
             if (string.IsNullOrEmpty(userInfo.Role))
@@ -60,50 +60,54 @@ public class UserInfoService : IUserInfoInterface
                 {
                     Success = false,
                     Message = "Country is required.",
-                    Field = "country"
+                    Field = "address"
                 };
             }
-
-            if (string.IsNullOrEmpty(userInfo.State))
-            {
-                return new UserInfoResponse()
-                {
-                    Success = false,
-                    Message = "State is required.",
-                    Field = "state"
-                };
-            }
-
-            if (string.IsNullOrEmpty(userInfo.City))
-            {
-                return new UserInfoResponse()
-                {
-                    Success = false,
-                    Message = "City is required.",
-                    Field = "city"
-                };
-            }
-
             if (string.IsNullOrEmpty(userInfo.PostalCode))
             {
                 return new UserInfoResponse()
                 {
                     Success = false,
                     Message = "Postal Code is required.",
-                    Field = "postal"
+                    Field = "address"
                 };
             }
+            if (string.IsNullOrEmpty(userInfo.City))
+            {
+                return new UserInfoResponse()
+                {
+                    Success = false,
+                    Message = "City is required.",
+                    Field = "address"
+                };
+            }
+            if (string.IsNullOrEmpty(userInfo.State))
+            {
+                return new UserInfoResponse()
+                {
+                    Success = false,
+                    Message = "State is required.",
+                    Field = "address"
+                };
+            }
+
+
+
+
             var newUserInfo = await context.UserInfo.AddAsync(new UserInfoEntity()
             {
                 FirstName = userInfo.FirstName,
                 LastName = userInfo.LastName,
                 Role = userInfo.Role,
+                Gender = userInfo.Gender,
+                Phone = userInfo.Phone,
+                LRN = userInfo.LRN,
                 Country = userInfo.Country,
                 State = userInfo.State,
                 City = userInfo.City,
                 PostalCode = userInfo.PostalCode,
                 Birthdate = userInfo.Birthdate,
-                UserId = userId 
+                UserId = userId
             });
 
             await context.SaveChangesAsync();
@@ -128,6 +132,18 @@ public class UserInfoService : IUserInfoInterface
             if (!string.IsNullOrEmpty(userInfo.Role))
             {
                 user.Role = userInfo.Role;
+            }
+            if (!string.IsNullOrEmpty(userInfo.Gender))
+            {
+                user.Gender = userInfo.Gender;
+            }
+            if (!string.IsNullOrEmpty(userInfo.Phone))
+            {
+                user.Phone = userInfo.Phone;
+            }
+            if (!string.IsNullOrEmpty(userInfo.LRN))
+            {
+                user.LRN = userInfo.LRN;
             }
             if (!string.IsNullOrEmpty(userInfo.Country))
             {

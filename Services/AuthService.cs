@@ -1,7 +1,7 @@
 
 
 using System.Text;
-using Microsoft.AspNetCore.Mvc; 
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -223,6 +223,7 @@ public class AuthService : IAuthInterface
                     Field = "role"
                 };
             }
+
             if (user == null)
             {
                 return new AuthResponse()
@@ -234,6 +235,16 @@ public class AuthService : IAuthInterface
             }
             else
             {
+
+                if (user.Role != "student")
+                {
+                    return new AuthResponse()
+                    {
+                        Success = false,
+                        Message = "User's registered role is not a valid student",
+                        Field = "role"
+                    };
+                }
                 var isPasswordCorrect = BCrypt.Net.BCrypt.Verify(loginDto.password, user.Password);
                 if (!isPasswordCorrect)
                 {
@@ -323,9 +334,9 @@ public class AuthService : IAuthInterface
             };
         }
 
-        if(userCode.UserId != user.Id)
+        if (userCode.UserId != user.Id)
         {
-           
+
             return new AuthResponse()
             {
                 Success = false,
@@ -333,9 +344,9 @@ public class AuthService : IAuthInterface
                 Field = "code"
             };
         }
-        
-        var isPasswordCorrect = BCrypt.Net.BCrypt.Verify(adminDto.password,user.Password);
-        if(!isPasswordCorrect)
+
+        var isPasswordCorrect = BCrypt.Net.BCrypt.Verify(adminDto.password, user.Password);
+        if (!isPasswordCorrect)
         {
 
             return new AuthResponse()
@@ -346,13 +357,13 @@ public class AuthService : IAuthInterface
             };
         }
 
-        var token = GenerateToken(user.Id,user.Email,user.Role);
+        var token = GenerateToken(user.Id, user.Email, user.Role);
 
         return new AuthResponse()
         {
-          Success = true,
-          Message = "Login Successful !",
-          Token = token
+            Success = true,
+            Message = "Login Successful !",
+            Token = token
         };
 
     }
