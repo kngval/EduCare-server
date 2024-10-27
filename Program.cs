@@ -1,4 +1,4 @@
-
+//J0#!A@2o23
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
@@ -73,9 +73,7 @@ builder.Services.AddAuthentication(opt =>
             if (!context.Response.HasStarted)
             {
                 context.Response.StatusCode = 401;
-                context.Response.ContentType = "application/json";
-                return context.Response.WriteAsync("{\"error\": \"You are not authorized to access this resource.\"}");
-            }
+                context.Response.ContentType = "application/json"; return context.Response.WriteAsync("{\"error\": \"You are not authorized to access this resource.\"}"); }
             return Task.CompletedTask;
         }
     };
