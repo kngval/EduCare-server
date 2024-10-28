@@ -8,19 +8,20 @@
 
 - Model Builder to apply relationships
 
-- Do Repository Design Pattern
+- Do Repository Design Pattern ^_^
 
 - Create Controllers & Adjust HTTP Endpoints ^_^
 
 - Database Connection with Npgsql.EntityFramework.PostgreSQL ^_^
 
-- Implement Database Migrations (with EntityFrameworkCore.Design)
+- Implement Database Migrations (with EntityFrameworkCore.Design) ^_^
 
-- Use Dependency Injection 
+- Use Dependency Injection ^_^ 
 
-- Implement JWT with user roles
+- Implement JWT with user roles ^_^
 
-- Token Handling
+- Token Handling ^_^
 
 - Implement Protected endpoints
 
+-  
