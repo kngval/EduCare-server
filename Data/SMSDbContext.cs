@@ -13,8 +13,6 @@ public class SMSDbContext : DbContext
     public DbSet<UserInfoEntity> UserInfo => Set<UserInfoEntity>();
     public DbSet<RoomEntity> Rooms => Set<RoomEntity>();
 
-    //Don't forget to put the model builder below _ ;
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<UserCodeEntity>()
