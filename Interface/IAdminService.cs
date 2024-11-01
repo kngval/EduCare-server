@@ -1,5 +1,7 @@
 
 
+using sms_server.Response;
+
 public interface IAdminService {
-  Task GenerateCode(int length);  
+  AdminResponse GenerateCode(int length);  
 }
