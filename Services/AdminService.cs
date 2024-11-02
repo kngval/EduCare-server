@@ -10,6 +10,10 @@ public class AdminService:IAdminService {
       this.context = context;
     }
 
+    public List<UserCodeEntity> GetAllCodes(){
+      return context.UserCode.ToList<UserCodeEntity>();
+    } 
+
     public AdminResponse GenerateCode(int length)
     {
       if(length <= 0){
