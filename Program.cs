@@ -1,4 +1,3 @@
-//J0#!A@2o23
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
