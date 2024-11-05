@@ -5,7 +5,6 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 //------------------
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddEndpointsApiExplorer();
 //JWT AUTHENTICATION
 builder.Services.AddAuthentication(opt =>
@@ -89,7 +88,7 @@ builder.Services.AddScoped<IUserInfoInterface, UserInfoService>();
 builder.Services.AddDbContext<SMSDbContext>(opt =>
 {
 
-    var dbConnection = Environment.GetEnvironmentVariable("SMS_CONNECTION");
+    var dbConnection = Environment.GetEnvironmentVariable("Educare_DB");
     if (string.IsNullOrEmpty(dbConnection))
     {
         throw new InvalidOperationException("Invalid Database Connection string");
@@ -118,6 +117,5 @@ app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
 app.Run();
 
