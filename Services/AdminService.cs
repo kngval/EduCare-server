@@ -14,6 +14,45 @@ public class AdminService:IAdminService {
       return context.UserCode.ToList<UserCodeEntity>();
     } 
 
+    public CreateRoomResponse CreateRoom(RoomDto roomDto){
+      if(string.IsNullOrEmpty(roomDto.RoomName) || string.IsNullOrWhiteSpace(roomDto.RoomName)){
+        return new CreateRoomResponse(){
+          Success = false,
+          Message = "Room Name is required"
+        };
+      } 
+      if(string.IsNullOrWhiteSpace(roomDto.teacherEmail) || string.IsNullOrEmpty(roomDto.teacherEmail)){
+        return new CreateRoomResponse(){
+          Success = false,
+          Message = "Teacher email is required"
+        };
+      }
+      var user = context.Users.Find(roomDto.teacherEmail);
+      if(user == null){
+        return new CreateRoomResponse(){
+          Success = false,
+          Message = "User not found"
+        }; 
+      }
+      
+      if(user.Role != "teacher"){
+        return new CreateRoomResponse(){
+          Success = false,
+          Message = "User is not a valid teacher"
+        };
+      }
+
+      var room = context.Rooms.Add(new RoomEntity(){
+       SubjectName = roomDto.RoomName,
+       TeacherId = user.Id
+      });  
+      context.SaveChangesAsync();
+      return new CreateRoomResponse(){
+        Success = true,
+        Message = "Room created successfully !"
+      };
+    }
+
     public AdminResponse GenerateCode(int length)
     {
       if(length <= 0){
