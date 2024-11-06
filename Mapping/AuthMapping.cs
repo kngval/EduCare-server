@@ -1,9 +1,7 @@
-
-
 using sms_server.Dtos;
 using sms_server.Entities;
 
-namespace sms_server.Mapping;
+namespace educare_server.Mapping;
 
 public static class AuthMapping {
 
