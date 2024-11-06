@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 
-using sms_server.Mapping;
+using educare_server.Mapping;
 using sms_server.Dtos;
 using sms_server.Entities;
 using System.Security.Claims;
