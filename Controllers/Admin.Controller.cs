@@ -19,6 +19,21 @@ public class AdminController : ControllerBase
     {
         return Ok("Hi User");
     }
+    
+    //Room Creation Endpoint
+    [HttpPost("create-room")]
+    public IActionResult CreateRoom(RoomDto roomDto){
+      try{
+        var res = adminService.CreateRoom(roomDto);
+        if(res.Success == false){
+          return BadRequest(res);
+        }
+        return Ok(res);
+      } catch(Exception ex){
+        Console.WriteLine(ex);
+        return StatusCode(500,"An error occured while creating the room");
+      }
+    }
 
     [HttpGet("fetch-codes")]
     public IActionResult FetchCodes(){
@@ -30,7 +45,8 @@ public class AdminController : ControllerBase
         return StatusCode(500, "An error occurred while generating the code.");
       }
     }
-
+      
+    //Generate code
     [HttpPost("create-code")]
     public IActionResult CreateCode()
     {
