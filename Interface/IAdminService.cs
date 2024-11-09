@@ -5,7 +5,7 @@ using sms_server.Response;
 
 public interface IAdminService {
   AdminResponse GenerateCode(int length);  
-  List<UserCodeEntity> GetAllCodes(); 
+  List<UserCodeWithUserDTO> GetAllCodes(); 
   CreateRoomResponse CreateRoom(RoomDto roomDto); 
 
 }
