@@ -35,6 +35,8 @@ public class AdminController : ControllerBase
       }
     }
 
+
+    //Code Endpoints
     [HttpGet("fetch-codes")]
     public IActionResult FetchCodes(){
       try{
