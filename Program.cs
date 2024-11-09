@@ -84,6 +84,7 @@ builder.Services.AddAuthorization(opt =>
 //SERVICES (REPO)
 builder.Services.AddScoped<IAuthInterface, AuthService>();
 builder.Services.AddScoped<IUserInfoInterface, UserInfoService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 //DB Context
 builder.Services.AddDbContext<SMSDbContext>(opt =>
 {
