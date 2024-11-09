@@ -10,10 +10,7 @@ public class AdminService:IAdminService {
       this.context = context;
     }
 
-    public List<UserCodeEntity> GetAllCodes(){
-      return context.UserCode.ToList<UserCodeEntity>();
-    } 
-
+    //Room Services
     public CreateRoomResponse CreateRoom(RoomDto roomDto){
       if(string.IsNullOrEmpty(roomDto.RoomName) || string.IsNullOrWhiteSpace(roomDto.RoomName)){
         return new CreateRoomResponse(){
@@ -52,6 +49,22 @@ public class AdminService:IAdminService {
         Message = "Room created successfully !"
       };
     }
+
+      
+    // CODE SERVICES 
+    public List<UserCodeWithUserDTO> GetAllCodes(){
+      var result = from userCode in context.UserCode
+                   join user in context.Users
+                   on userCode.UserId equals user.Id
+                   into userGroup
+                   from user in userGroup.DefaultIfEmpty()
+                   select new UserCodeWithUserDTO{
+                     UserCode = userCode,
+                     UserEmail = user != null ? user.Email : null
+                   };
+      return result.ToList<UserCodeWithUserDTO>();
+      // return context.UserCode.ToList<UserCodeEntity>();
+    } 
 
     public AdminResponse GenerateCode(int length)
     {
