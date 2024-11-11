@@ -69,4 +69,21 @@ public class AdminController : ControllerBase
 
     }
 
+    [HttpDelete("delete-code/{codeid}")]
+    public IActionResult DeleteCode([FromRoute]int codeId){
+      try{
+        
+        var res = adminService.DeleteCode(codeId);
+        if(res.Success == false){
+          return BadRequest(res);
+        }
+
+        return Ok(res);
+
+      }catch(Exception ex){
+        Console.WriteLine(ex);
+        return StatusCode(500, "An error occured while deleting the code");
+      }
+    }
+
 }
