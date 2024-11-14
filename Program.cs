@@ -50,9 +50,7 @@ builder.Services.AddAuthentication(opt =>
 
         OnAuthenticationFailed = context =>
         {
-            // Log or inspect context.Exception here
-            var message = context.Exception.Message; // Log the exception message for debugging
-
+            var message = context.Exception.Message; 
             context.Response.StatusCode = 401;
             context.Response.ContentType = "application/json";
             var jsonMessage = context.Exception is SecurityTokenExpiredException
@@ -63,15 +61,13 @@ builder.Services.AddAuthentication(opt =>
             return context.Response.WriteAsync($"{{\"error\": \"{jsonMessage}\", \"details\": \"{message}\"}}");
         },
 
-        // Called when authorization fails
         OnChallenge = context =>
         {
-            context.HandleResponse(); // Suppress the default unauthorized response
-
-            if (!context.Response.HasStarted)
+            context.HandleResponse(); if (!context.Response.HasStarted)
             {
                 context.Response.StatusCode = 401;
-                context.Response.ContentType = "application/json"; return context.Response.WriteAsync("{\"error\": \"You are not authorized to access this resource.\"}"); }
+                context.Response.ContentType = "application/json"; return context.Response.WriteAsync("{\"error\": \"You are not authorized to access this resource.\"}");
+            }
             return Task.CompletedTask;
         }
     };
@@ -106,9 +102,6 @@ builder.Services.AddCors(opt =>
         .AllowAnyMethod();
     });
 });
-
-
-
 //CONTROLLERS
 builder.Services.AddControllers();
 var app = builder.Build();
