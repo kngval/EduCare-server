@@ -5,7 +5,6 @@ namespace educare_server.Mapping;
 
 public static class AuthMapping {
 
-  
   public static UserEntity toAuthEntity(this SignUpDto userDto)
   {
     return new UserEntity()
