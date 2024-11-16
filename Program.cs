@@ -84,8 +84,7 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 //DB Context
 builder.Services.AddDbContext<SMSDbContext>(opt =>
 {
-
-    var dbConnection = Environment.GetEnvironmentVariable("Educare_DB");
+    var dbConnection = Environment.GetEnvironmentVariable("Educare_DB"); //DATABASE CONNECTION
     if (string.IsNullOrEmpty(dbConnection))
     {
         throw new InvalidOperationException("Invalid Database Connection string");
