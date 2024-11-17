@@ -13,7 +13,7 @@ public class SMSDbContext : DbContext
     public DbSet<UserInfoEntity> UserInfo => Set<UserInfoEntity>();
     public DbSet<RoomEntity> Rooms => Set<RoomEntity>();
     public DbSet<RoomToStudentEntity> RoomsToStudent => Set<RoomToStudentEntity>();
-
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<UserCodeEntity>()
@@ -26,7 +26,7 @@ public class SMSDbContext : DbContext
           .HasOne<UserEntity>()
           .WithMany()
           .HasForeignKey(ui => ui.UserId);
-      
+
         //CREATE THE MODEL BUILDER FOR ROOM ENTITY
     }
 }
