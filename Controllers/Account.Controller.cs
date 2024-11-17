@@ -52,6 +52,7 @@ public class AccountController : ControllerBase
         if (userIdClaimValue == null)
         {
             return null;
+           
         }
         return int.Parse(userIdClaimValue);
     }
