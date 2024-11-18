@@ -1,5 +1,3 @@
-
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using sms_server.Dtos;
 [ApiController]
@@ -86,7 +84,7 @@ public class AuthController : ControllerBase {
       } catch(Exception ex)
       {
         Console.WriteLine(ex.Message);
-        return StatusCode(500,"An unexpected error occured.");
+        return StatusCode(500,"An unexpected error in login admin occured.");
       }
     }
 }
