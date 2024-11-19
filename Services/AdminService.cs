@@ -13,56 +13,6 @@ public class AdminService : IAdminService
         this.context = context;
     }
 
-    //Room Services
-    public CreateRoomResponse CreateRoom(RoomDto roomDto)
-    {
-        if (string.IsNullOrEmpty(roomDto.RoomName) || string.IsNullOrWhiteSpace(roomDto.RoomName))
-        {
-            return new CreateRoomResponse()
-            {
-                Success = false,
-                Message = "Room Name is required"
-            };
-        }
-        if (string.IsNullOrWhiteSpace(roomDto.teacherEmail) || string.IsNullOrEmpty(roomDto.teacherEmail))
-        {
-            return new CreateRoomResponse()
-            {
-                Success = false,
-                Message = "Teacher email is required"
-            };
-        }
-        var user = context.Users.Find(roomDto.teacherEmail);
-        if (user == null)
-        {
-            return new CreateRoomResponse()
-            {
-                Success = false,
-                Message = "User not found"
-            };
-        }
-
-        if (user.Role != "teacher")
-        {
-            return new CreateRoomResponse()
-            {
-                Success = false,
-                Message = "User is not a valid teacher"
-            };
-        }
-
-        var room = context.Rooms.Add(new RoomEntity()
-        {
-            SubjectName = roomDto.RoomName,
-            TeacherId = user.Id
-        });
-        context.SaveChangesAsync();
-        return new CreateRoomResponse()
-        {
-            Success = true,
-            Message = "Room created successfully !"
-        };
-    }
 
 
     // CODE SERVICES 
@@ -112,7 +62,7 @@ public class AdminService : IAdminService
                 Message = "Code length not valid."
             };
         }
-        var code = GenerateRandomCode(length);
+        var code = Helpers.GenerateRandomCode(length);
 
         var dbCode = context.UserCode.FirstOrDefault(c => c.Code == code);
 
@@ -139,18 +89,4 @@ public class AdminService : IAdminService
         };
     }
 
-    private string GenerateRandomCode(int codeLength)
-    {
-        string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        StringBuilder randomStrBuilder = new StringBuilder(codeLength);
-        Random random = new Random();
-        for (int i = 0; i < codeLength; i++)
-        {
-            int randomIndex = random.Next(alphabet.Length);
-            char randomChar = alphabet[randomIndex];
-
-            randomStrBuilder.Append(randomChar);
-        }
-        return randomStrBuilder.ToString();
-    }
 }
