@@ -12,7 +12,8 @@ public class RoomService : IRoomService
     //Fetch Rooms 
     public List<RoomEntity> FetchRooms()
     {
-
+      var room = context.Rooms.ToList();
+      return room;
     }
 
     //Create Room 
