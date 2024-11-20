@@ -1,6 +1,5 @@
-
-
 using sms_server.Entities;
+
 public class RoomService : IRoomService
 {
     private readonly SMSDbContext context;
@@ -10,7 +9,13 @@ public class RoomService : IRoomService
         this.context = context;
     }
 
-    //Room Services
+    //Fetch Rooms 
+    public List<RoomEntity> FetchRooms()
+    {
+
+    }
+
+    //Create Room 
     public CreateRoomResponse CreateRoom(RoomDto roomDto)
     {
         if (string.IsNullOrEmpty(roomDto.RoomName) || string.IsNullOrWhiteSpace(roomDto.RoomName))
