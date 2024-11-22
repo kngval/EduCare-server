@@ -1,32 +1,61 @@
 
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [Authorize]
 [ApiController]
 [Route("api/room")]
-public class RoomController :ControllerBase {
+public class RoomController : ControllerBase
+{
 
-  private readonly RoomService roomService;
+    private readonly IRoomService roomService;
 
-  public RoomController(RoomService roomService){
-    this.roomService = roomService;
-  }
-
-  [HttpGet("fetchrooms")]
-  public IActionResult<List<RoomEntity>> FetchRooms(){
-    try{
-      var userId = GetUserId();
-      if(userId == null){
-        return BadRequest("User id is null while fetching rooms");
-      }
-      var res = roomService.FetchRooms();
-
-    } catch(Exception ex){
-      Console.Write(ex.Message);
-      return StatusCode(500,"Error occured while fetching rooms");
+    public RoomController(IRoomService roomService)
+    {
+        this.roomService = roomService;
     }
-  }
+
+    [HttpGet("fetch-rooms")]
+    public IActionResult FetchRooms()
+    {
+        try
+        {
+            var userId = GetUserId();
+            if (userId == null)
+            {
+                return BadRequest("User id is null while fetching rooms");
+            }
+            var res = roomService.FetchRooms();
+
+            return Ok(res);
+
+        }
+        catch (Exception ex)
+        {
+            Console.Write(ex.Message);
+            return StatusCode(500, "Error occured while fetching rooms");
+        }
+    }
+
+    [HttpPost("create-room")]
+    public IActionResult CreateRoom(RoomDto roomDto)
+    {
+        try
+        {
+            var res = roomService.CreateRoom(roomDto);
+            if (res.Success == false)
+            {
+                return BadRequest(res);
+            }
+            return Ok(res);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return StatusCode(500, "An error occured while creating the room");
+        }
+    }
 
     private int? GetUserId()
     {
@@ -34,7 +63,7 @@ public class RoomController :ControllerBase {
         if (userIdClaimValue == null)
         {
             return null;
-           
+
         }
         return int.Parse(userIdClaimValue);
     }
