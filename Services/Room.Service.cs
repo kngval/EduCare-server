@@ -68,5 +68,12 @@ public class RoomService : IRoomService
         };
     }
 
+    public CreateRoomResponse DeleteRoom(int id)
+    {
+      return new CreateRoomResponse(){
+        Success = false,
+        Message = "Not implemented"
+      };
+    }
 }
 
