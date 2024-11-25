@@ -38,6 +38,11 @@ public class RoomController : ControllerBase
         }
     }
 
+    [HttpGet("fetch-rooms/{id}")]
+    public IActionResult FetchRoomDetails(){
+      
+    }
+
     [HttpPost("create-room")]
     public IActionResult CreateRoom(RoomDto roomDto)
     {
