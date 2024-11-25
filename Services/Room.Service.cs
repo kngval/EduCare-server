@@ -16,6 +16,10 @@ public class RoomService : IRoomService
       return room;
     }
 
+    //Room Details 
+    public RoomEntity FetchRoomDetails(int id){
+     throw new NotImplementedException(); 
+    }
     //Create Room 
     public CreateRoomResponse CreateRoom(RoomDto roomDto)
     {
@@ -75,5 +79,6 @@ public class RoomService : IRoomService
         Message = "Not implemented"
       };
     }
+
 }
 
