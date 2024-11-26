@@ -17,8 +17,12 @@ public class RoomService : IRoomService
     }
 
     //Room Details 
-    public RoomEntity FetchRoomDetails(int id){
-     throw new NotImplementedException(); 
+    public RoomEntity? FetchRoomDetails(int id){
+      var res = context.Rooms.Find(id);
+      if(res == null){
+        return null;
+      }
+      return res;
     }
     //Create Room 
     public CreateRoomResponse CreateRoom(RoomDto roomDto)
