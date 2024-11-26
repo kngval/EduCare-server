@@ -39,8 +39,9 @@ public class RoomController : ControllerBase
     }
 
     [HttpGet("fetch-rooms/{id}")]
-    public IActionResult FetchRoomDetails(){
-      
+    public IActionResult FetchRoomDetails([FromRoute] int id){
+      var res = roomService.FetchRoomDetails(id);
+      return Ok(res);
     }
 
     [HttpPost("create-room")]
