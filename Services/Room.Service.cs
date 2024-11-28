@@ -25,9 +25,9 @@ public class RoomService : IRoomService
       return res;
     }
     //Create Room 
-    public CreateRoomResponse CreateRoom(RoomDto roomDto)
+    public CreateRoomResponse CreateRoom(string roomName)
     {
-        if (string.IsNullOrEmpty(roomDto.RoomName) || string.IsNullOrWhiteSpace(roomDto.RoomName))
+        if (string.IsNullOrEmpty(roomName) || string.IsNullOrWhiteSpace(roomName))
         {
             return new CreateRoomResponse()
             {
@@ -35,15 +35,7 @@ public class RoomService : IRoomService
                 Message = "Room Name is required"
             };
         }
-        if (string.IsNullOrWhiteSpace(roomDto.teacherEmail) || string.IsNullOrEmpty(roomDto.teacherEmail))
-        {
-            return new CreateRoomResponse()
-            {
-                Success = false,
-                Message = "Teacher email is required"
-            };
-        }
-        var user = context.Users.Find(roomDto.teacherEmail);
+        var user = context.Users.Find(roomName);
         if (user == null)
         {
             return new CreateRoomResponse()
@@ -64,8 +56,8 @@ public class RoomService : IRoomService
 
         var room = context.Rooms.Add(new RoomEntity()
         {
-            SubjectName = roomDto.RoomName,
-            TeacherId = user.Id,
+            SubjectName = roomName,
+            TeacherId = null, 
             RoomCode = Helpers.GenerateRandomCode(10) 
         });
         context.SaveChangesAsync();
