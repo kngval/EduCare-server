@@ -45,11 +45,11 @@ public class RoomController : ControllerBase
     }
 
     [HttpPost("create-room")]
-    public IActionResult CreateRoom(string roomName)
+    public IActionResult CreateRoom([FromBody] RoomDto roomDto)
     {
         try
         {
-            var res = roomService.CreateRoom(roomName);
+            var res = roomService.CreateRoom(roomDto);
             if (res.Success == false)
             {
                 return BadRequest(res);
