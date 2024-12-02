@@ -25,9 +25,9 @@ public class RoomService : IRoomService
       return res;
     }
     //Create Room 
-    public CreateRoomResponse CreateRoom(string roomName)
+    public CreateRoomResponse CreateRoom(RoomDto roomDto)
     {
-        if (string.IsNullOrEmpty(roomName) || string.IsNullOrWhiteSpace(roomName))
+        if (string.IsNullOrEmpty(roomDto.roomName) || string.IsNullOrWhiteSpace(roomDto.roomName))
         {
             return new CreateRoomResponse()
             {
@@ -35,29 +35,10 @@ public class RoomService : IRoomService
                 Message = "Room Name is required"
             };
         }
-        var user = context.Users.Find(roomName);
-        if (user == null)
-        {
-            return new CreateRoomResponse()
-            {
-                Success = false,
-                Message = "User not found"
-            };
-        }
-
-        if (user.Role != "teacher")
-        {
-            return new CreateRoomResponse()
-            {
-                Success = false,
-                Message = "User is not a valid teacher"
-            };
-        }
 
         var room = context.Rooms.Add(new RoomEntity()
         {
-            SubjectName = roomName,
-            TeacherId = null, 
+            SubjectName = roomDto.roomName,
             RoomCode = Helpers.GenerateRandomCode(10) 
         });
         context.SaveChangesAsync();
