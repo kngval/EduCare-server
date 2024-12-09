@@ -50,7 +50,7 @@ builder.Services.AddAuthentication(opt =>
 
         OnAuthenticationFailed = context =>
         {
-            var message = context.Exception.Message; 
+            var message = context.Exception.Message;
             context.Response.StatusCode = 401;
             context.Response.ContentType = "application/json";
             var jsonMessage = context.Exception is SecurityTokenExpiredException
@@ -81,7 +81,7 @@ builder.Services.AddAuthorization(opt =>
 builder.Services.AddScoped<IAuthInterface, AuthService>();
 builder.Services.AddScoped<IUserInfoInterface, UserInfoService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
-builder.Services.AddScoped<IRoomService,RoomService>();
+builder.Services.AddScoped<IRoomService, RoomService>();
 //DB Context
 builder.Services.AddDbContext<SMSDbContext>(opt =>
 {
