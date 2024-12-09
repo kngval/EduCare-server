@@ -9,53 +9,60 @@ public class RoomService : IRoomService
         this.context = context;
     }
 
-    //Fetch Rooms 
+    //Fetch Rooms
     public List<RoomEntity> FetchRooms()
     {
-      var room = context.Rooms.ToList();
-      return room;
+        var room = context.Rooms.ToList();
+        room.Sort((x, y) => y.Id.CompareTo(x.Id));
+        return room;
     }
 
-    //Room Details 
-    public RoomEntity? FetchRoomDetails(int id){
-      var res = context.Rooms.Find(id);
-      if(res == null){
-        return null;
-      }
-      return res;
+    //Room Details
+    public RoomEntity? FetchRoomDetails(int id)
+    {
+        var res =
+            from room in context.Rooms
+            join user in context.UserInfo on room.TeacherId equals user.UserId
+            into userJoin
+            from user in userJoin.DefaultIfEmpty()
+            where room.Id == id
+            select new RoomEntity
+            {
+                Id = room.Id,
+                SubjectName = room.SubjectName,
+                RoomCode = room.RoomCode,
+                TeacherId = room.TeacherId,
+                TeacherName = user != null ? user.FirstName + " " + user.LastName : null,
+            };
+
+        if (res == null)
+        {
+            return null;
+        }
+        return res.FirstOrDefault();
     }
-    //Create Room 
+
+    //Create Room
     public CreateRoomResponse CreateRoom(RoomDto roomDto)
     {
         if (string.IsNullOrEmpty(roomDto.roomName) || string.IsNullOrWhiteSpace(roomDto.roomName))
         {
-            return new CreateRoomResponse()
-            {
-                Success = false,
-                Message = "Room Name is required"
-            };
+            return new CreateRoomResponse() { Success = false, Message = "Room Name is required" };
         }
 
-        var room = context.Rooms.Add(new RoomEntity()
-        {
-            SubjectName = roomDto.roomName,
-            RoomCode = Helpers.GenerateRandomCode(10) 
-        });
+        var room = context.Rooms.Add(
+            new RoomEntity()
+            {
+                SubjectName = roomDto.roomName,
+                RoomCode = Helpers.GenerateRandomCode(10),
+            }
+        );
         context.SaveChangesAsync();
-        return new CreateRoomResponse()
-        {
-            Success = true,
-            Message = "Room created successfully !"
-        };
+        return new CreateRoomResponse() { Success = true, Message = "Room created successfully !" };
     }
 
     public CreateRoomResponse DeleteRoom(int id)
     {
-      return new CreateRoomResponse(){
-        Success = false,
-        Message = "Not implemented"
-      };
+        return new CreateRoomResponse() { Success = false, Message = "Not implemented" };
     }
-
 }
-
