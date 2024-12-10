@@ -9,17 +9,16 @@ public class RoomService : IRoomService
         this.context = context;
     }
 
-    //Fetch Rooms
-    public List<RoomEntity> FetchRooms()
+    public List<RoomEntity> AdminFetchRooms()
     {
         var room = context.Rooms.ToList();
         room.Sort((x, y) => y.Id.CompareTo(x.Id));
         return room;
     }
 
-    //Room Details
     public RoomEntity? FetchRoomDetails(int id)
     {
+        // join table Rooms & UserInfo => userJoin;
         var res =
             from room in context.Rooms
             join user in context.UserInfo on room.TeacherId equals user.UserId
