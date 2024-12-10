@@ -15,10 +15,12 @@ public class RoomController : ControllerBase
     {
         this.roomService = roomService;
     }
-
-    [HttpGet("fetch-rooms")]
-    public IActionResult FetchRooms()
+    [HttpGet("fetch-rooms/admin")]
+    public IActionResult AdminFetchRooms([FromQuery] string role)
     {
+        if(role != "admin"){
+          return Unauthorized("Admin Only");
+        }
         try
         {
             var userId = GetUserId();
@@ -26,7 +28,7 @@ public class RoomController : ControllerBase
             {
                 return BadRequest("User id is null while fetching rooms");
             }
-            var res = roomService.FetchRooms();
+            var res = roomService.AdminFetchRooms();
 
             return Ok(res);
 
