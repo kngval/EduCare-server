@@ -16,6 +16,10 @@ public class RoomService : IRoomService
         return room;
     }
 
+    public List<RoomEntity> FetchRooms(int userId){
+      
+    }
+
     public RoomEntity? FetchRoomDetails(int id)
     {
         // join table Rooms & UserInfo => userJoin;
