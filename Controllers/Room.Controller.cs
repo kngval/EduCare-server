@@ -1,4 +1,3 @@
-
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,18 +7,19 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api/room")]
 public class RoomController : ControllerBase
 {
-
     private readonly IRoomService roomService;
 
     public RoomController(IRoomService roomService)
     {
         this.roomService = roomService;
     }
+
     [HttpGet("fetch-rooms/admin")]
     public IActionResult AdminFetchRooms([FromQuery] string role)
     {
-        if(role != "admin"){
-          return Unauthorized("Admin Only");
+        if (role != "admin")
+        {
+            return Unauthorized("Admin Only");
         }
         try
         {
@@ -31,7 +31,6 @@ public class RoomController : ControllerBase
             var res = roomService.AdminFetchRooms();
 
             return Ok(res);
-
         }
         catch (Exception ex)
         {
@@ -40,10 +39,24 @@ public class RoomController : ControllerBase
         }
     }
 
+    [HttpGet("fetch-rooms")]
+    public IActionResult FetchRooms()
+    {
+        var userId = GetUserId();
+
+        if (userId == null)
+        {
+            return Unauthorized("User Id not found");
+        }
+
+        var res = roomService.FetchRooms(userId);
+    }
+
     [HttpGet("fetch-rooms/{id}")]
-    public IActionResult FetchRoomDetails([FromRoute] int id){
-      var res = roomService.FetchRoomDetails(id);
-      return Ok(res);
+    public IActionResult FetchRoomDetails([FromRoute] int id)
+    {
+        var res = roomService.FetchRoomDetails(id);
+        return Ok(res);
     }
 
     [HttpPost("create-room")]
@@ -67,11 +80,12 @@ public class RoomController : ControllerBase
 
     private int? GetUserId()
     {
-        var userIdClaimValue = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        var userIdClaimValue = User
+            .Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)
+            ?.Value;
         if (userIdClaimValue == null)
         {
             return null;
-
         }
         return int.Parse(userIdClaimValue);
     }
