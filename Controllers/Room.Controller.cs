@@ -49,7 +49,7 @@ public class RoomController : ControllerBase
             return Unauthorized("User Id not found");
         }
 
-        var res = roomService.FetchRooms(userId);
+        var res = roomService.FetchRooms(userId.Value);
     }
 
     [HttpGet("fetch-rooms/{id}")]
