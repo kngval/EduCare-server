@@ -17,7 +17,7 @@ public class RoomService : IRoomService
     }
 
     public List<RoomEntity> FetchRooms(int userId){
-      
+        
     }
 
     public RoomEntity? FetchRoomDetails(int id)
