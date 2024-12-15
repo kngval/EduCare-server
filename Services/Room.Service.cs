@@ -16,8 +16,11 @@ public class RoomService : IRoomService
         return room;
     }
 
-    public List<RoomEntity> FetchRooms(int userId){
-        
+    public List<RoomEntity> FetchRooms(int userId)
+    {
+        List<RoomEntity> rooms = new List<RoomEntity>();
+
+        return rooms;
     }
 
     public RoomEntity? FetchRoomDetails(int id)
@@ -64,8 +67,59 @@ public class RoomService : IRoomService
         return new CreateRoomResponse() { Success = true, Message = "Room created successfully !" };
     }
 
+
+    public CreateRoomResponse JoinRoom(string roomCode, int studentId)
+    {
+        if (string.IsNullOrEmpty(roomCode) || string.IsNullOrWhiteSpace(roomCode))
+        {
+            return new CreateRoomResponse
+            {
+                Success = false,
+                Message = "Room Code is required"
+
+            };
+        }
+
+        RoomEntity? room = context.Rooms.FirstOrDefault(r => r.RoomCode == roomCode);
+        
+        if(room == null) {
+          return new CreateRoomResponse {
+            Success = false,
+            Message = "Room does not exist"
+          };
+        }
+        
+        //check if the student already joined this room, if true then they shouldn't be allowed to join it, if false then they can
+        var alreadyJoinedRoom = context.RoomsToStudent.FirstOrDefault(r => r.StudentId == studentId);
+
+        if(alreadyJoinedRoom != null){
+          return new CreateRoomResponse {
+            Success = false,
+            Message = "Already joined this room"
+          };
+        }
+        
+        //create the entity if they haven't joined this room
+        RoomToStudentEntity roomToStudentLink = new RoomToStudentEntity()
+        {
+          StudentId = studentId,
+          RoomId = room.Id,
+          Grade = null
+        };
+  
+        context.RoomsToStudent.Add(roomToStudentLink);
+        context.SaveChangesAsync();
+
+        return new CreateRoomResponse {
+          Success = true,
+          Message = "Successfully joined the room"
+        };
+    }
+
+
     public CreateRoomResponse DeleteRoom(int id)
     {
         return new CreateRoomResponse() { Success = false, Message = "Not implemented" };
     }
+
 }
