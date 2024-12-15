@@ -17,10 +17,10 @@ public class RoomController : ControllerBase
     [HttpGet("fetch-rooms/admin")]
     public IActionResult AdminFetchRooms([FromQuery] string role)
     {
-        if (role != "admin")
-        {
-            return Unauthorized("Admin Only");
-        }
+        // if (role != "admin")
+        // {
+        //     return Unauthorized("Admin Only");
+        // }
         try
         {
             var userId = GetUserId();
@@ -50,6 +50,8 @@ public class RoomController : ControllerBase
         }
 
         var res = roomService.FetchRooms(userId.Value);
+        
+        return Ok(res);
     }
 
     [HttpGet("fetch-rooms/{id}")]
@@ -77,6 +79,8 @@ public class RoomController : ControllerBase
             return StatusCode(500, "An error occured while creating the room");
         }
     }
+
+
 
     private int? GetUserId()
     {
