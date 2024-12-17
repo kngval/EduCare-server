@@ -61,6 +61,23 @@ public class RoomController : ControllerBase
         return Ok(res);
     }
 
+    [HttpPost("join-room")]
+    public IActionResult JoinRoom([FromBody] string roomCode){
+      var userId = GetUserId();
+
+      if(userId == null){
+        return Unauthorized("User Id not found");
+      }
+
+      var res = roomService.JoinRoom(userId.Value,roomCode); 
+
+      if(res.Success == false){
+        return BadRequest(res);
+      }
+
+      return Ok(res);
+    }
+
     [HttpPost("create-room")]
     public IActionResult CreateRoom([FromBody] RoomDto roomDto)
     {
