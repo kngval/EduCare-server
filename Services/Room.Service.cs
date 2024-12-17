@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using sms_server.Entities;
 
 public class RoomService : IRoomService
@@ -16,11 +17,51 @@ public class RoomService : IRoomService
         return room;
     }
 
-    public List<RoomEntity> FetchRooms(int userId)
+    public List<RoomToStudentEntity> FetchRooms(int userId)
     {
-        List<RoomEntity> rooms = new List<RoomEntity>();
+        var userRooms = context.RoomsToStudent.Where(r => r.StudentId == userId).Include(r => r.Room).ToList();
+        return userRooms;
+    }
 
-        return rooms;
+    public CreateRoomResponse JoinRoom(int userId, string roomCode)
+    {
+        if (string.IsNullOrEmpty(roomCode) || string.IsNullOrWhiteSpace(roomCode))
+        {
+            return new CreateRoomResponse
+            {
+                Success = false,
+                Message = "Room code is required"
+            };
+        }
+
+        var room = context.Rooms.FirstOrDefault(r => r.RoomCode == roomCode);
+
+        if (room == null)
+        {
+
+            return new CreateRoomResponse
+            {
+                Success = false,
+                Message = "Room does not exist"
+            };
+        }
+
+        RoomToStudentEntity rts = new RoomToStudentEntity()
+        {
+            StudentId = userId,
+            RoomId = room.Id,
+            Room = room
+        };
+
+        context.RoomsToStudent.Add(rts);
+        context.SaveChangesAsync();
+
+        return new CreateRoomResponse
+        {
+            Success = true,
+            Message = "Successfully joined the room"
+        };
+
     }
 
     public RoomEntity? FetchRoomDetails(int id)
@@ -81,38 +122,43 @@ public class RoomService : IRoomService
         }
 
         RoomEntity? room = context.Rooms.FirstOrDefault(r => r.RoomCode == roomCode);
-        
-        if(room == null) {
-          return new CreateRoomResponse {
-            Success = false,
-            Message = "Room does not exist"
-          };
+
+        if (room == null)
+        {
+            return new CreateRoomResponse
+            {
+                Success = false,
+                Message = "Room does not exist"
+            };
         }
-        
+
         //check if the student already joined this room, if true then they shouldn't be allowed to join it, if false then they can
         var alreadyJoinedRoom = context.RoomsToStudent.FirstOrDefault(r => r.StudentId == studentId);
 
-        if(alreadyJoinedRoom != null){
-          return new CreateRoomResponse {
-            Success = false,
-            Message = "Already joined this room"
-          };
+        if (alreadyJoinedRoom != null)
+        {
+            return new CreateRoomResponse
+            {
+                Success = false,
+                Message = "Already joined this room"
+            };
         }
-        
+
         //create the entity if they haven't joined this room
         RoomToStudentEntity roomToStudentLink = new RoomToStudentEntity()
         {
-          StudentId = studentId,
-          RoomId = room.Id,
-          Grade = null
+            StudentId = studentId,
+            RoomId = room.Id,
+            Grade = null
         };
-  
+
         context.RoomsToStudent.Add(roomToStudentLink);
         context.SaveChangesAsync();
 
-        return new CreateRoomResponse {
-          Success = true,
-          Message = "Successfully joined the room"
+        return new CreateRoomResponse
+        {
+            Success = true,
+            Message = "Successfully joined the room"
         };
     }
 
