@@ -7,4 +7,5 @@ public class RoomToStudentEntity {
   public int? Grade {get;set;}
 
   public RoomEntity? Room{get;set;}
+  public UserInfoEntity? UserInfo {get;set;}
 }
