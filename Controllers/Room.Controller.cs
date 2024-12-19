@@ -14,33 +14,33 @@ public class RoomController : ControllerBase
         this.roomService = roomService;
     }
 
-    [HttpGet("fetch-rooms/admin")]
-    public IActionResult AdminFetchRooms([FromQuery] string role)
-    {
-        // if (role != "admin")
-        // {
-        //     return Unauthorized("Admin Only");
-        // }
-        try
-        {
-            var userId = GetUserId();
-            if (userId == null)
-            {
-                return BadRequest("User id is null while fetching rooms");
-            }
-            var res = roomService.AdminFetchRooms();
-
-            return Ok(res);
-        }
-        catch (Exception ex)
-        {
-            Console.Write(ex.Message);
-            return StatusCode(500, "Error occured while fetching rooms");
-        }
-    }
+    // [HttpGet("fetch-rooms/admin")]
+    // public IActionResult AdminFetchRooms([FromQuery] string role)
+    // {
+    //     // if (role != "admin")
+    //     // {
+    //     //     return Unauthorized("Admin Only");
+    //     // }
+    //     try
+    //     {
+    //         var userId = GetUserId();
+    //         if (userId == null)
+    //         {
+    //             return BadRequest("User id is null while fetching rooms");
+    //         }
+    //         var res = roomService.AdminFetchRooms();
+    //
+    //         return Ok(res);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Console.Write(ex.Message);
+    //         return StatusCode(500, "Error occured while fetching rooms");
+    //     }
+    // }
 
     [HttpGet("fetch-rooms")]
-    public IActionResult FetchRooms()
+    public IActionResult FetchRooms([FromQuery] string role)
     {
         var userId = GetUserId();
 
@@ -48,10 +48,16 @@ public class RoomController : ControllerBase
         {
             return Unauthorized("User Id not found");
         }
-
-        var res = roomService.FetchRooms(userId.Value);
-        
-        return Ok(res);
+        if (role == "admin")
+        {
+            var res = roomService.AdminFetchRooms();
+            return Ok(res);
+        }
+        else
+        {
+            var res = roomService.FetchRooms(userId.Value);
+            return Ok(res);
+        }
     }
 
     [HttpGet("fetch-rooms/{id}")]
@@ -62,20 +68,23 @@ public class RoomController : ControllerBase
     }
 
     [HttpPost("join-room")]
-    public IActionResult JoinRoom([FromBody] string roomCode){
-      var userId = GetUserId();
+    public IActionResult JoinRoom([FromBody] string roomCode)
+    {
+        var userId = GetUserId();
 
-      if(userId == null){
-        return Unauthorized("User Id not found");
-      }
+        if (userId == null)
+        {
+            return Unauthorized("User Id not found");
+        }
 
-      var res = roomService.JoinRoom(userId.Value,roomCode); 
+        var res = roomService.JoinRoom(userId.Value, roomCode);
 
-      if(res.Success == false){
-        return BadRequest(res);
-      }
+        if (res.Success == false)
+        {
+            return BadRequest(res);
+        }
 
-      return Ok(res);
+        return Ok(res);
     }
 
     [HttpPost("create-room")]
