@@ -25,6 +25,13 @@ public class RoomService : IRoomService
 
     public CreateRoomResponse JoinRoom(int userId, string roomCode)
     {
+        var userInfoExists = context.UserInfo.FirstOrDefault(u => u.UserId == userId);
+        if(userInfoExists == null) {
+          return new CreateRoomResponse {
+            Success = false,
+            Message = "Finish setting up your profile in 'Account' Tab"
+          };
+        }
         if (string.IsNullOrEmpty(roomCode) || string.IsNullOrWhiteSpace(roomCode))
         {
             return new CreateRoomResponse
