@@ -26,11 +26,13 @@ public class RoomService : IRoomService
     public CreateRoomResponse JoinRoom(int userId, string roomCode)
     {
         var userInfoExists = context.UserInfo.FirstOrDefault(u => u.UserId == userId);
-        if(userInfoExists == null) {
-          return new CreateRoomResponse {
-            Success = false,
-            Message = "Finish setting up your profile in 'Account' Tab"
-          };
+        if (userInfoExists == null)
+        {
+            return new CreateRoomResponse
+            {
+                Success = false,
+                Message = "Finish setting up your profile in 'Account' Tab"
+            };
         }
         if (string.IsNullOrEmpty(roomCode) || string.IsNullOrWhiteSpace(roomCode))
         {
@@ -53,11 +55,21 @@ public class RoomService : IRoomService
             };
         }
 
+        //check if the user already joined this room
+        var roomJoin = context.RoomsToStudent.Where(s => s.StudentId == userId).FirstOrDefault(r => r.RoomId == room.Id);
+
+        if(roomJoin != null){
+          return new CreateRoomResponse {
+            Success = false,
+            Message = "Already joined this room"
+          };
+        }
+
         RoomToStudentEntity rts = new RoomToStudentEntity()
         {
             StudentId = userId,
             RoomId = room.Id,
-            Room = room
+            Room = room,
         };
 
         context.RoomsToStudent.Add(rts);
@@ -71,15 +83,30 @@ public class RoomService : IRoomService
 
     }
 
-    public RoomEntity? FetchRoomDetails(int id)
+    public RoomEntity? FetchRoomDetails(int roomId, int userId)
     {
+        //check if the userId is in the rooms to student entity
+        var dbUser = context.Users.Find(userId);
+        if (dbUser == null)
+        {
+            return null;
+        }
+        if (dbUser.Role != "admin")
+        {
+            var RTSExist = context.RoomsToStudent.Where(r => r.StudentId == dbUser.Id).FirstOrDefault(rm => rm.RoomId == roomId);
+            if (RTSExist == null)
+            {
+                return null;
+            }
+        }
+
         // join table Rooms & UserInfo => userJoin;
         var res =
             from room in context.Rooms
             join user in context.UserInfo on room.TeacherId equals user.UserId
             into userJoin
             from user in userJoin.DefaultIfEmpty()
-            where room.Id == id
+            where room.Id == roomId
             select new RoomEntity
             {
                 Id = room.Id,
@@ -116,58 +143,6 @@ public class RoomService : IRoomService
     }
 
 
-    public CreateRoomResponse JoinRoom(string roomCode, int studentId)
-    {
-        if (string.IsNullOrEmpty(roomCode) || string.IsNullOrWhiteSpace(roomCode))
-        {
-            return new CreateRoomResponse
-            {
-                Success = false,
-                Message = "Room Code is required"
-
-            };
-        }
-
-        RoomEntity? room = context.Rooms.FirstOrDefault(r => r.RoomCode == roomCode);
-
-        if (room == null)
-        {
-            return new CreateRoomResponse
-            {
-                Success = false,
-                Message = "Room does not exist"
-            };
-        }
-
-        //check if the student already joined this room, if true then they shouldn't be allowed to join it, if false then they can
-        var alreadyJoinedRoom = context.RoomsToStudent.FirstOrDefault(r => r.StudentId == studentId);
-
-        if (alreadyJoinedRoom != null)
-        {
-            return new CreateRoomResponse
-            {
-                Success = false,
-                Message = "Already joined this room"
-            };
-        }
-
-        //create the entity if they haven't joined this room
-        RoomToStudentEntity roomToStudentLink = new RoomToStudentEntity()
-        {
-            StudentId = studentId,
-            RoomId = room.Id,
-            Grade = null
-        };
-
-        context.RoomsToStudent.Add(roomToStudentLink);
-        context.SaveChangesAsync();
-
-        return new CreateRoomResponse
-        {
-            Success = true,
-            Message = "Successfully joined the room"
-        };
-    }
 
 
     public CreateRoomResponse DeleteRoom(int id)
