@@ -63,7 +63,15 @@ public class RoomController : ControllerBase
     [HttpGet("fetch-rooms/{id}")]
     public IActionResult FetchRoomDetails([FromRoute] int id)
     {
-        var res = roomService.FetchRoomDetails(id);
+        var userId = GetUserId();
+
+        if(userId == null) {
+          return BadRequest("User Id is not present");
+        }
+        var res = roomService.FetchRoomDetails(id,userId.Value);
+        if(res == null) { 
+          return BadRequest("Inaccessible !");
+        }
         return Ok(res);
     }
 
@@ -78,6 +86,7 @@ public class RoomController : ControllerBase
         }
 
         var res = roomService.JoinRoom(userId.Value, roomCode);
+
 
         if (res.Success == false)
         {
