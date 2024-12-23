@@ -44,7 +44,6 @@ public class RoomService : IRoomService
         }
 
         var room = context.Rooms.FirstOrDefault(r => r.RoomCode == roomCode);
-
         if (room == null)
         {
 
@@ -55,21 +54,38 @@ public class RoomService : IRoomService
             };
         }
 
+        if (userInfoExists.Role == "teacher")
+        {
+            if (room.TeacherName != null)
+            {
+                return new CreateRoomResponse
+                {
+                    Success = false,
+                    Message = "Only one teacher can be allowed in a room"
+                };
+            }
+        }
+
         //check if the user already joined this room
         var roomJoin = context.RoomsToStudent.Where(s => s.StudentId == userId).FirstOrDefault(r => r.RoomId == room.Id);
 
-        if(roomJoin != null){
-          return new CreateRoomResponse {
-            Success = false,
-            Message = "Already joined this room"
-          };
+        if (roomJoin != null)
+        {
+            return new CreateRoomResponse
+            {
+                Success = false,
+                Message = "Already joined this room"
+            };
         }
+
 
         RoomToStudentEntity rts = new RoomToStudentEntity()
         {
             StudentId = userId,
             RoomId = room.Id,
             Room = room,
+            Role = userInfoExists.Role,
+            UserInfoId = userInfoExists.UserId
         };
 
         context.RoomsToStudent.Add(rts);
@@ -121,6 +137,11 @@ public class RoomService : IRoomService
             return null;
         }
         return res.FirstOrDefault();
+    }
+
+    public RoomToStudentEntity? FetchRoomsStudent(int roomId)
+    {
+        throw new NotImplementedException();
     }
 
     //Create Room
