@@ -17,8 +17,16 @@ public class RoomService : IRoomService
         return room;
     }
 
+    public List<RoomEntity> TeacherFetchRooms(int userId){
+      var user = context.Users.Find(userId);
+      var userRooms = context.Rooms.Where(r => r.TeacherId == userId).ToList();
+      userRooms.Sort((x,y) => y.Id.CompareTo(x.Id));
+      return userRooms;
+    }
+
     public List<RoomToStudentEntity> FetchRooms(int userId)
     {
+        var user = context.Users.Find(userId);
         var userRooms = context.RoomsToStudent.Where(r => r.StudentId == userId).Include(r => r.Room).ToList();
         return userRooms;
     }
@@ -54,22 +62,7 @@ public class RoomService : IRoomService
             };
         }
 
-        if (userInfoExists.Role == "teacher")
-        {
-            if (room.TeacherId != null)
-            {
-                return new CreateRoomResponse
-                {
-                    Success = false,
-                    Message = "Only one teacher can be allowed in a room"
-                };
-            }
 
-            //add teacher in the room
-            room.TeacherId = userInfoExists.UserId;
-            context.SaveChanges();
-
-        }
 
 
 
@@ -85,7 +78,27 @@ public class RoomService : IRoomService
                 Message = "Already joined this room"
             };
         }
+        if (userInfoExists.Role == "teacher")
+        {
+            if (room.TeacherId != null)
+            {
+                return new CreateRoomResponse
+                {
+                    Success = false,
+                    Message = "A teacher already occupied this room"
+                };
+            }
 
+            //add teacher in the room
+            room.TeacherId = userInfoExists.UserId;
+            room.TeacherName = userInfoExists.FirstName + " " + userInfoExists.LastName;
+            context.SaveChanges();
+            return new CreateRoomResponse { 
+              Success = true,
+              Message = "Successfully joined the room"
+            };
+
+        }
 
         RoomToStudentEntity rts = new RoomToStudentEntity()
         {
@@ -96,20 +109,6 @@ public class RoomService : IRoomService
             UserInfoId = userInfoExists.UserId
         };
 
-        // if (userInfoExists.Role == "teacher")
-        // {
-        //     if (room.TeacherId != null)
-        //     {
-        //         return new CreateRoomResponse
-        //         {
-        //             Success = false,
-        //             Message = "Only one teacher can be allowed in a room"
-        //         };
-        //     }
-        //     room.TeacherId = userInfoExists.UserId;
-        //     context.RoomsToStudent.Add(rts);
-        //     context.SaveChangesAsync();
-        // }
 
         context.RoomsToStudent.Add(rts);
         context.SaveChangesAsync();
