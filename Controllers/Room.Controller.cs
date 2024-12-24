@@ -14,30 +14,6 @@ public class RoomController : ControllerBase
         this.roomService = roomService;
     }
 
-    // [HttpGet("fetch-rooms/admin")]
-    // public IActionResult AdminFetchRooms([FromQuery] string role)
-    // {
-    //     // if (role != "admin")
-    //     // {
-    //     //     return Unauthorized("Admin Only");
-    //     // }
-    //     try
-    //     {
-    //         var userId = GetUserId();
-    //         if (userId == null)
-    //         {
-    //             return BadRequest("User id is null while fetching rooms");
-    //         }
-    //         var res = roomService.AdminFetchRooms();
-    //
-    //         return Ok(res);
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         Console.Write(ex.Message);
-    //         return StatusCode(500, "Error occured while fetching rooms");
-    //     }
-    // }
 
     [HttpGet("fetch-rooms")]
     public IActionResult FetchRooms([FromQuery] string role)
@@ -53,6 +29,11 @@ public class RoomController : ControllerBase
             var res = roomService.AdminFetchRooms();
             return Ok(res);
         }
+        else if (role == "teacher")
+        {
+          var res = roomService.TeacherFetchRooms(userId.Value);
+          return Ok(res);
+        }
         else
         {
             var res = roomService.FetchRooms(userId.Value);
@@ -65,12 +46,14 @@ public class RoomController : ControllerBase
     {
         var userId = GetUserId();
 
-        if(userId == null) {
-          return BadRequest("User Id is not present");
+        if (userId == null)
+        {
+            return BadRequest("User Id is not present");
         }
-        var res = roomService.FetchRoomDetails(id,userId.Value);
-        if(res == null) { 
-          return BadRequest("Inaccessible !");
+        var res = roomService.FetchRoomDetails(id, userId.Value);
+        if (res == null)
+        {
+            return BadRequest("Inaccessible !");
         }
         return Ok(res);
     }
