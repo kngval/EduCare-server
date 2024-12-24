@@ -56,7 +56,7 @@ public class RoomService : IRoomService
 
         if (userInfoExists.Role == "teacher")
         {
-            if (room.TeacherName != null)
+            if (room.TeacherId != null)
             {
                 return new CreateRoomResponse
                 {
@@ -64,10 +64,18 @@ public class RoomService : IRoomService
                     Message = "Only one teacher can be allowed in a room"
                 };
             }
+
+            //add teacher in the room
+            room.TeacherId = userInfoExists.UserId;
+            context.SaveChanges();
+
         }
+
+
 
         //check if the user already joined this room
         var roomJoin = context.RoomsToStudent.Where(s => s.StudentId == userId).FirstOrDefault(r => r.RoomId == room.Id);
+
 
         if (roomJoin != null)
         {
@@ -87,6 +95,21 @@ public class RoomService : IRoomService
             Role = userInfoExists.Role,
             UserInfoId = userInfoExists.UserId
         };
+
+        // if (userInfoExists.Role == "teacher")
+        // {
+        //     if (room.TeacherId != null)
+        //     {
+        //         return new CreateRoomResponse
+        //         {
+        //             Success = false,
+        //             Message = "Only one teacher can be allowed in a room"
+        //         };
+        //     }
+        //     room.TeacherId = userInfoExists.UserId;
+        //     context.RoomsToStudent.Add(rts);
+        //     context.SaveChangesAsync();
+        // }
 
         context.RoomsToStudent.Add(rts);
         context.SaveChangesAsync();
