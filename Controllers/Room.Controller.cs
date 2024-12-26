@@ -82,9 +82,13 @@ public class RoomController : ControllerBase
     [HttpPost("create-room")]
     public IActionResult CreateRoom([FromBody] RoomDto roomDto)
     {
+        var userId = GetUserId();
+        if(userId == null) {
+          return Unauthorized("User Id not found");
+        }
         try
         {
-            var res = roomService.CreateRoom(roomDto);
+            var res = roomService.CreateRoom(roomDto,userId.Value);
             if (res.Success == false)
             {
                 return BadRequest(res);
