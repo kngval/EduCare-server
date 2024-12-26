@@ -17,11 +17,12 @@ public class RoomService : IRoomService
         return room;
     }
 
-    public List<RoomEntity> TeacherFetchRooms(int userId){
-      var user = context.Users.Find(userId);
-      var userRooms = context.Rooms.Where(r => r.TeacherId == userId).ToList();
-      userRooms.Sort((x,y) => y.Id.CompareTo(x.Id));
-      return userRooms;
+    public List<RoomEntity> TeacherFetchRooms(int userId)
+    {
+        var user = context.Users.Find(userId);
+        var userRooms = context.Rooms.Where(r => r.TeacherId == userId).ToList();
+        userRooms.Sort((x, y) => y.Id.CompareTo(x.Id));
+        return userRooms;
     }
 
     public List<RoomToStudentEntity> FetchRooms(int userId)
@@ -93,9 +94,10 @@ public class RoomService : IRoomService
             room.TeacherId = userInfoExists.UserId;
             room.TeacherName = userInfoExists.FirstName + " " + userInfoExists.LastName;
             context.SaveChanges();
-            return new CreateRoomResponse { 
-              Success = true,
-              Message = "Successfully joined the room"
+            return new CreateRoomResponse
+            {
+                Success = true,
+                Message = "Successfully joined the room"
             };
 
         }
@@ -123,7 +125,6 @@ public class RoomService : IRoomService
 
     public RoomEntity? FetchRoomDetails(int roomId, int userId)
     {
-        //check if the userId is in the rooms to student entity
         var dbUser = context.Users.Find(userId);
         if (dbUser == null)
         {
@@ -167,11 +168,41 @@ public class RoomService : IRoomService
     }
 
     //Create Room
-    public CreateRoomResponse CreateRoom(RoomDto roomDto)
+    public CreateRoomResponse CreateRoom(RoomDto roomDto, int userId)
     {
         if (string.IsNullOrEmpty(roomDto.roomName) || string.IsNullOrWhiteSpace(roomDto.roomName))
         {
             return new CreateRoomResponse() { Success = false, Message = "Room Name is required" };
+        }
+
+        var user = context.Users.Find(userId);
+
+        if (user == null)
+        {
+            return new CreateRoomResponse
+            {
+                Success = false,
+                Message = "User not found"
+            };
+        }
+
+        if (user.Role != "admin")
+        {
+            return new CreateRoomResponse
+            {
+                Success = false,
+                Message = "User is not an admin"
+            };
+        }
+
+        var userInfo = context.UserInfo.FirstOrDefault(u => u.UserId == userId);
+        if (userInfo == null)
+        {
+            return new CreateRoomResponse
+            {
+                Success = false,
+                Message = "Finish setting up your profile in 'Account' Tab"
+            };
         }
 
         var room = context.Rooms.Add(
