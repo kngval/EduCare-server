@@ -5,7 +5,7 @@ public interface IRoomService {
   List<RoomToStudentEntity> FetchRooms(int userId);
   RoomEntity? FetchRoomDetails(int roomId,int userId);
   RoomToStudentEntity? FetchRoomsStudent(int roomId);
-  CreateRoomResponse CreateRoom(RoomDto roomDto); 
+  CreateRoomResponse CreateRoom(RoomDto roomDto,int userId); 
   CreateRoomResponse JoinRoom(int studentId,string roomCode);
   CreateRoomResponse DeleteRoom(int id);
 }
