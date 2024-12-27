@@ -31,8 +31,8 @@ public class RoomController : ControllerBase
         }
         else if (role == "teacher")
         {
-          var res = roomService.TeacherFetchRooms(userId.Value);
-          return Ok(res);
+            var res = roomService.TeacherFetchRooms(userId.Value);
+            return Ok(res);
         }
         else
         {
@@ -54,6 +54,24 @@ public class RoomController : ControllerBase
         if (res == null)
         {
             return BadRequest("Inaccessible !");
+        }
+        return Ok(res);
+    }
+
+    [HttpGet("fetch-students/{roomId}")]
+    public IActionResult FetchRoomsStudents([FromRoute] int roomId)
+    {
+        var userId = GetUserId();
+
+        if (userId == null)
+        {
+            return Unauthorized("User Id is not present");
+        }
+
+        var res = roomService.FetchRoomsStudent(roomId, userId.Value);
+        if (res == null || !res.Any())
+        {
+            return Ok(new List<RoomToStudentEntity>()); // Return an empty list
         }
         return Ok(res);
     }
@@ -83,12 +101,13 @@ public class RoomController : ControllerBase
     public IActionResult CreateRoom([FromBody] RoomDto roomDto)
     {
         var userId = GetUserId();
-        if(userId == null) {
-          return Unauthorized("User Id not found");
+        if (userId == null)
+        {
+            return Unauthorized("User Id not found");
         }
         try
         {
-            var res = roomService.CreateRoom(roomDto,userId.Value);
+            var res = roomService.CreateRoom(roomDto, userId.Value);
             if (res.Success == false)
             {
                 return BadRequest(res);
