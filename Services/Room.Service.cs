@@ -162,9 +162,27 @@ public class RoomService : IRoomService
         return res.FirstOrDefault();
     }
 
-    public RoomToStudentEntity? FetchRoomsStudent(int roomId)
+    public List<RoomToStudentEntity>? FetchRoomsStudent(int roomId,int userId)
     {
-        throw new NotImplementedException();
+      
+        var dbUser = context.Users.Find(userId);
+        if (dbUser == null)
+        {
+            return null;
+        }
+        if (dbUser.Role != "admin")
+        {
+            var RTSExist = context.RoomsToStudent.Where(r => r.StudentId == dbUser.Id).FirstOrDefault(rm => rm.RoomId == roomId);
+            if (RTSExist == null)
+            {
+                return null;
+            }
+
+            var students = context.RoomsToStudent.Where(r => r.RoomId == roomId).Include(u => u.UserInfo).ToList();
+            return students;
+        }
+
+        return context.RoomsToStudent.Where(r => r.RoomId == roomId).Include(u => u.UserInfo).ToList();
     }
 
     //Create Room
