@@ -101,10 +101,17 @@ public class RoomService : IRoomService
             };
 
         }
-
+        var user = context.Users.Find(userId);
+        if(user == null) {
+          return new CreateRoomResponse  {
+            Success = false,
+            Message = "User does not exist"
+          };
+        }
         RoomToStudentEntity rts = new RoomToStudentEntity()
         {
             StudentId = userId,
+            Email = user.Email,
             RoomId = room.Id,
             Room = room,
             Role = userInfoExists.Role,
@@ -162,9 +169,9 @@ public class RoomService : IRoomService
         return res.FirstOrDefault();
     }
 
-    public List<RoomToStudentEntity>? FetchRoomsStudent(int roomId,int userId)
+    public List<RoomToStudentEntity>? FetchRoomsStudent(int roomId, int userId)
     {
-      
+
         var dbUser = context.Users.Find(userId);
         if (dbUser == null)
         {
