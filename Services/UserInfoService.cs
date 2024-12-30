@@ -23,6 +23,15 @@ public class UserInfoService : IUserInfoInterface
 
         if (user == null)
         {
+            if(userInfo.age == 0){
+                return new UserInfoResponse()
+                {
+                    Success = false,
+                    Message = "Age is required",
+                    Field = "age"
+                };
+
+            }
             if (string.IsNullOrEmpty(userInfo.FirstName))
             {
                 return new UserInfoResponse()
