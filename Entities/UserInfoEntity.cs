@@ -4,6 +4,7 @@ public class UserInfoEntity {
   public int Id {get;set;}
   public string FirstName {get;set;} = string.Empty;
   public string LastName {get;set;} = string.Empty; 
+  public int Age {get;set;}
   public required string Role {get;set;} 
   public string? Phone {get;set;}
   public DateOnly? Birthdate {get;set;}
