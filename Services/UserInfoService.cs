@@ -129,11 +129,12 @@ public class UserInfoService : IUserInfoInterface
             {
                 user.FirstName = userInfo.FirstName;
             }
-
-
             if (!string.IsNullOrEmpty(userInfo.LastName))
             {
                 user.LastName = userInfo.LastName;
+            }
+            if(userInfo.age != 0){
+              user.Age = userInfo.age;
             }
             if (!string.IsNullOrEmpty(userInfo.Role))
             {
