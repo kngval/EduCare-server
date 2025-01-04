@@ -94,6 +94,8 @@ builder.Services.AddAuthorization();
 builder.Services.AddAuthorization(opt =>
 {
     opt.AddPolicy("admin", policy => policy.RequireClaim(ClaimTypes.Role, "admin"));
+    opt.AddPolicy("teacher", policy => policy.RequireClaim(ClaimTypes.Role, "teacher"));
+    opt.AddPolicy("adminOrTeacher", policy => policy.RequireClaim(ClaimTypes.Role, "admin","teacher"));
 });
 
 //SERVICES (REPO)
@@ -101,6 +103,7 @@ builder.Services.AddScoped<IAuthInterface, AuthService>();
 builder.Services.AddScoped<IUserInfoInterface, UserInfoService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IRoomService, RoomService>();
+builder.Services.AddScoped<IGradesInterface,GradesService>();
 
 //DB Context
 builder.Services.AddDbContext<SMSDbContext>(opt =>
@@ -126,48 +129,9 @@ builder.Services.AddCors(opt =>
 builder.Services.AddControllers();
 
 //swagger ui
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.AddSecurityDefinition(
-        "Bearer",
-        new OpenApiSecurityScheme
-        {
-            Name = "Authorization",
-            Type = SecuritySchemeType.ApiKey,
-            Scheme = "Bearer",
-            BearerFormat = "JWT",
-            In = ParameterLocation.Header,
-            Description =
-                "Enter 'Bearer' followed by a space with your jwt token ex : Bearer ey2sadjawldawdw...",
-        }
-    );
-
-    c.AddSecurityRequirement(
-        new OpenApiSecurityRequirement
-        {
-            {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer",
-                    },
-                },
-                new string[] { }
-            },
-        }
-    );
-});
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 app.UseHttpsRedirection();
 app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
