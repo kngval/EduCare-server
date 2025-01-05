@@ -137,7 +137,7 @@ public class RoomService : IRoomService
         {
             return null;
         }
-        if (dbUser.Role != "admin")
+        if (dbUser.Role == "student")
         {
             var RTSExist = context.RoomsToStudent.Where(r => r.StudentId == dbUser.Id).FirstOrDefault(rm => rm.RoomId == roomId);
             if (RTSExist == null)
@@ -177,7 +177,7 @@ public class RoomService : IRoomService
         {
             return null;
         }
-        if (dbUser.Role != "admin")
+        if (dbUser.Role == "student")
         {
             var RTSExist = context.RoomsToStudent.Where(r => r.StudentId == dbUser.Id).FirstOrDefault(rm => rm.RoomId == roomId);
             if (RTSExist == null)
