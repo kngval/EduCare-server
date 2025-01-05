@@ -104,6 +104,7 @@ public class UserInfoService : IUserInfoInterface
             {
                 FirstName = userInfo.FirstName,
                 LastName = userInfo.LastName,
+                Age = userInfo.age,
                 Role = userInfo.Role,
                 Gender = userInfo.Gender,
                 Phone = userInfo.Phone,
