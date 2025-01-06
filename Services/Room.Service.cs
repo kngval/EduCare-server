@@ -192,6 +192,12 @@ public class RoomService : IRoomService
         return context.RoomsToStudent.Where(r => r.RoomId == roomId).Include(u => u.UserInfo).ToList();
     }
 
+    //REMOVE STUDENT 
+    public CreateRoomResponse RemoveStudent(int studentId)
+    {
+      
+    }
+
     //Create Room
     public CreateRoomResponse CreateRoom(RoomDto roomDto, int userId)
     {

@@ -121,6 +121,19 @@ public class RoomController : ControllerBase
         }
     }
 
+    [HttpDelete("remove-student")]
+    public IActionResult RemoveStudent([FromQuery] int studentId)
+    {
+        try
+        {
+          var res = roomService.
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return StatusCode(500, "An error occured while creating the room");
+        }
+    }
 
 
     private int? GetUserId()
