@@ -121,12 +121,18 @@ public class RoomController : ControllerBase
         }
     }
 
+    [Authorize(Policy = "adminOrTeacher")]
     [HttpDelete("remove-student")]
-    public IActionResult RemoveStudent([FromQuery] int studentId)
+    public IActionResult RemoveStudent([FromQuery] int studentId, [FromQuery] int roomId)
     {
         try
         {
-          var res = roomService.
+          var res = roomService.RemoveStudent(studentId,roomId);
+          if(res.Success == true)
+          {
+            return Ok(res);
+          }
+          return BadRequest(res);
         }
         catch (Exception ex)
         {
