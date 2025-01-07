@@ -193,9 +193,25 @@ public class RoomService : IRoomService
     }
 
     //REMOVE STUDENT 
-    public CreateRoomResponse RemoveStudent(int studentId)
+    public CreateRoomResponse RemoveStudent(int studentId, int roomId)
     {
-      
+      var student = context.RoomsToStudent.Where(r => r.StudentId == studentId).FirstOrDefault(rs => rs.RoomId == roomId); 
+
+      if(student == null)
+      {
+        return new CreateRoomResponse {
+          Success = false,
+          Message = "Could not be found"
+        };
+      }
+
+      context.Remove(student);
+      context.SaveChanges();
+
+      return new CreateRoomResponse{
+        Success = true,
+        Message = "User removed successfully"
+      };
     }
 
     //Create Room
