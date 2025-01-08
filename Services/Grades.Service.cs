@@ -1,6 +1,8 @@
 
 
 
+using Microsoft.EntityFrameworkCore;
+
 public class GradesService : IGradesInterface
 {
     private readonly SMSDbContext context;
@@ -11,7 +13,8 @@ public class GradesService : IGradesInterface
     }
     public List<RoomToStudentEntity> FetchStudentGrades(int studentId)
     {
-        throw new NotImplementedException();
+        var grades = context.RoomsToStudent.Where(r => r.StudentId == studentId).Include(r => r.Room);
+        return grades.ToList();
     }
 
     public GradingResponse GradeStudent(GradesRequest gradesRequest)
