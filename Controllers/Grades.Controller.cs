@@ -1,7 +1,7 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+[Authorize]
 [ApiController]
 [Route("/api/grades")]
 public class GradesController : ControllerBase
@@ -27,9 +27,10 @@ public class GradesController : ControllerBase
     }
 
     [HttpGet("fetch-grades")]
-    public IActionResult FetchStudentGrades()
+    public IActionResult FetchStudentGrades([FromQuery] int studentId)
     {
-        return Ok("Endpoint hit");
+      var res = gradesService.FetchStudentGrades(studentId);
+      return Ok(res);
     }
 
 }
