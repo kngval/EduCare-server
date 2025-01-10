@@ -115,7 +115,7 @@ public class RoomService : IRoomService
             RoomId = room.Id,
             Room = room,
             Role = userInfoExists.Role,
-            UserInfoId = userInfoExists.UserId
+            UserInfoId = userInfoExists.Id
         };
 
 
