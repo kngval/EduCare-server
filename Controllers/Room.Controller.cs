@@ -141,6 +141,17 @@ public class RoomController : ControllerBase
         }
     }
 
+    [Authorize(Policy = "adminOrTeacher")]
+    [HttpDelete("delete-room")]
+    public IActionResult DeleteRoom([FromQuery] int roomId)
+    {
+      var res = roomService.DeleteRoom(roomId);
+      if(res.Success == true)
+      {
+        return Ok(res);
+      }
+      return BadRequest(res);
+    }
 
     private int? GetUserId()
     {
