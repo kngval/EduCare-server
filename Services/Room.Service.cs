@@ -268,7 +268,23 @@ public class RoomService : IRoomService
 
     public CreateRoomResponse DeleteRoom(int id)
     {
-        return new CreateRoomResponse() { Success = false, Message = "Not implemented" };
+      var room = context.Rooms.Find(id);
+
+      if(room == null)
+      {
+        return new CreateRoomResponse {
+          Success = false,
+          Message = "Room does not exist"
+        };
+      }  
+
+      context.Rooms.Remove(room);
+      context.SaveChanges();
+
+      return new CreateRoomResponse {
+        Success = true,
+        Message = "Room deleted successfully"
+      };
     }
 
 }
