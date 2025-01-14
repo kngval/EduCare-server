@@ -102,11 +102,13 @@ public class RoomService : IRoomService
 
         }
         var user = context.Users.Find(userId);
-        if(user == null) {
-          return new CreateRoomResponse  {
-            Success = false,
-            Message = "User does not exist"
-          };
+        if (user == null)
+        {
+            return new CreateRoomResponse
+            {
+                Success = false,
+                Message = "User does not exist"
+            };
         }
         RoomToStudentEntity rts = new RoomToStudentEntity()
         {
@@ -195,23 +197,25 @@ public class RoomService : IRoomService
     //REMOVE STUDENT 
     public CreateRoomResponse RemoveStudent(int studentId, int roomId)
     {
-      var student = context.RoomsToStudent.Where(r => r.StudentId == studentId).FirstOrDefault(rs => rs.RoomId == roomId); 
+        var student = context.RoomsToStudent.Where(r => r.StudentId == studentId).FirstOrDefault(rs => rs.RoomId == roomId);
 
-      if(student == null)
-      {
-        return new CreateRoomResponse {
-          Success = false,
-          Message = "Could not be found"
+        if (student == null)
+        {
+            return new CreateRoomResponse
+            {
+                Success = false,
+                Message = "Could not be found"
+            };
+        }
+
+        context.Remove(student);
+        context.SaveChanges();
+
+        return new CreateRoomResponse
+        {
+            Success = true,
+            Message = "User removed successfully"
         };
-      }
-
-      context.Remove(student);
-      context.SaveChanges();
-
-      return new CreateRoomResponse{
-        Success = true,
-        Message = "User removed successfully"
-      };
     }
 
     //Create Room
@@ -252,15 +256,15 @@ public class RoomService : IRoomService
             };
         }
 
-        var room = context.Rooms.Add(
-            new RoomEntity()
-            {
+        RoomEntity room = new RoomEntity()
+        {
                 SubjectName = roomDto.roomName,
                 RoomCode = Helpers.GenerateRandomCode(10),
-            }
-        );
+        };
+
+        context.Rooms.Add(room);
         context.SaveChangesAsync();
-        return new CreateRoomResponse() { Success = true, Message = "Room created successfully !" };
+        return new CreateRoomResponse() { Success = true, Message = "Room created successfully !", Room = room };
     }
 
 
@@ -268,23 +272,25 @@ public class RoomService : IRoomService
 
     public CreateRoomResponse DeleteRoom(int id)
     {
-      var room = context.Rooms.Find(id);
+        var room = context.Rooms.Find(id);
 
-      if(room == null)
-      {
-        return new CreateRoomResponse {
-          Success = false,
-          Message = "Room does not exist"
+        if (room == null)
+        {
+            return new CreateRoomResponse
+            {
+                Success = false,
+                Message = "Room does not exist"
+            };
+        }
+
+        context.Rooms.Remove(room);
+        context.SaveChanges();
+
+        return new CreateRoomResponse
+        {
+            Success = true,
+            Message = "Room deleted successfully"
         };
-      }  
-
-      context.Rooms.Remove(room);
-      context.SaveChanges();
-
-      return new CreateRoomResponse {
-        Success = true,
-        Message = "Room deleted successfully"
-      };
     }
 
 }
