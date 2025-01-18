@@ -13,7 +13,7 @@ public class SMSDbContext : DbContext
     public DbSet<UserInfoEntity> UserInfo => Set<UserInfoEntity>();
     public DbSet<RoomEntity> Rooms => Set<RoomEntity>();
     public DbSet<RoomToStudentEntity> RoomsToStudent => Set<RoomToStudentEntity>();
-    
+    public DbSet<DashboardEntity> Dashboard => Set<DashboardEntity>(); 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<UserCodeEntity>()
