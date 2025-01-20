@@ -103,7 +103,7 @@ builder.Services.AddScoped<IUserInfoInterface, UserInfoService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IGradesInterface,GradesService>();
-
+builder.Services.AddScoped<IDashboardService,DashboardService>();
 //DB Context
 builder.Services.AddDbContext<SMSDbContext>(opt =>
 {
