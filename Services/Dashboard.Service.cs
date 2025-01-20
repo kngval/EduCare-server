@@ -1,4 +1,4 @@
-public class DashboardService
+public class DashboardService: IDashboardService
 {
     private readonly SMSDbContext context;
     public DashboardService(SMSDbContext context)
@@ -8,7 +8,9 @@ public class DashboardService
 
     public List<DashboardEntity> FetchAnnouncements()
     {
-        return context.Dashboard.ToList();
+        List<DashboardEntity> dashboard =  context.Dashboard.ToList();
+        dashboard.Sort((x,y) => y.Id.CompareTo(x.Id));
+        return dashboard;
     }
 
     public DashboardResponse PostAnnouncement(DashboardDto dashboardDto)
@@ -36,7 +38,7 @@ public class DashboardService
         {
           Title = dashboardDto.Title,
           Message = dashboardDto.Message,
-          Date = DateOnly.FromDateTime(DateTime.Now)
+          Date = DateTime.Now.ToString("MMMM dd yyyy") 
         };
 
         context.Dashboard.Add(newDashboard);
