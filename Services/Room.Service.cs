@@ -127,7 +127,7 @@ public class RoomService : IRoomService
         return new CreateRoomResponse
         {
             Success = true,
-            Message = "Successfully joined the room"
+            Message = "Successfully joined the room",
         };
 
     }
