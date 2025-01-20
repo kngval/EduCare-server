@@ -1,6 +1,7 @@
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+[Authorize]
 [ApiController]
 [Route("/api/dashboard")]
 public class Dashboard : ControllerBase
@@ -25,8 +26,9 @@ public class Dashboard : ControllerBase
             return StatusCode(500, "An unexpected error occured.");
         }
     }
+    [Authorize(Policy = "admin")]
     [HttpPost("post-announcement")]
-    public IActionResult postAnnouncement(DashboardDto dashboardDto)
+    public IActionResult postAnnouncement([FromBody] DashboardDto dashboardDto)
     {
         try
         {
